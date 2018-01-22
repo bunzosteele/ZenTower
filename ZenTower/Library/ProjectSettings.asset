@@ -715,7 +715,7 @@ PlayerSettings:
     Purchasing: 0
     UNet: 1
     Unity_Ads: 0
-  facebookSdkVersion: 
+  facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
   cloudProjectId: 0d0d686b-4fb1-4787-9d88-f8ab50d2d3dc
   projectName: ZenTower
