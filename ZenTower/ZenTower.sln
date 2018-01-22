@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZenTower", "ZenTower.csproj", "{9D7DAACD-4010-2589-3EAB-D230832936EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZenTower.Editor", "ZenTower.Editor.csproj", "{C17C3B4C-C98E-B0FB-BE8C-58C25985802C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D7DAACD-4010-2589-3EAB-D230832936EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D7DAACD-4010-2589-3EAB-D230832936EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D7DAACD-4010-2589-3EAB-D230832936EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7DAACD-4010-2589-3EAB-D230832936EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C17C3B4C-C98E-B0FB-BE8C-58C25985802C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C17C3B4C-C98E-B0FB-BE8C-58C25985802C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C17C3B4C-C98E-B0FB-BE8C-58C25985802C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C17C3B4C-C98E-B0FB-BE8C-58C25985802C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
