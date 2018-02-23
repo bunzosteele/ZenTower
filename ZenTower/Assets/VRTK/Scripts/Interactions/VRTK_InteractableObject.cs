@@ -72,9 +72,9 @@ namespace VRTK
 
         [Header("Touch Options", order = 1)]
 
-        [Tooltip("The colour to highlight the object when it is touched. This colour will override any globally set colour (for instance on the `VRTK_InteractTouch` script).")]
-        public Color touchHighlightColor = Color.clear;
-        [Tooltip("Determines which controller can initiate a touch action.")]
+		[Tooltip("The colour to highlight the object when it is touched. This colour will override any globally set colour (for instance on the `VRTK_InteractTouch` script).")]
+		public Color touchHighlightColor = Color.clear;
+		[Tooltip("Determines which controller can initiate a touch action.")]
         public AllowedController allowedTouchControllers = AllowedController.Both;
         [Tooltip("An array of colliders on the object to ignore when being touched.")]
         public Collider[] ignoredColliders;
