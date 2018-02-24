@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 14
-  productGUID: 804b00dab817fd1469931170d6eea204
+  productGUID: 342ab3c19c4ef214bb3a33538e1cd53c
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   defaultScreenOrientation: 4
@@ -269,7 +269,7 @@ PlayerSettings:
       m_Icon: {fileID: 0}
       m_Width: 1
       m_Height: 1
-      m_Kind: 44075
+      m_Kind: 44200
   m_BuildTargetBatching:
   - m_BuildTarget: Standalone
     m_StaticBatching: 1
@@ -733,7 +733,7 @@ PlayerSettings:
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
   cloudProjectId: 0d0d686b-4fb1-4787-9d88-f8ab50d2d3dc
-  projectName: 
+  projectName: ZenTower
   organizationId: bunzosteele
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0

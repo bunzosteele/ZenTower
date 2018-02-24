@@ -4,9 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Tower
+  - Undefined
   - Twistable
   - Objective
+  - Tower
   layers:
   - Default
   - TransparentFX

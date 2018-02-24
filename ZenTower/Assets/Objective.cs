@@ -11,19 +11,24 @@ public class Objective : MonoBehaviour {
 	void Update () {
 		if(gameObject.transform.position.y < 0)
 		{
-			CreateTower();
 			DeleteTower();
+			CreateTower();
 		}
 	}
 
 	private void DeleteTower()
 	{
-		Destroy(level);
+		var currentLevel = gameObject.transform.parent.parent.gameObject;
+		foreach (Transform child in currentLevel.transform)
+		{
+			Destroy(child.gameObject);
+		}
+		Destroy(currentLevel);
 	}
 
 	private void CreateTower()
 	{
-		Instantiate(level, new Vector3(-.3f, 0, -.2f), Quaternion.identity);
+		Instantiate(level, new Vector3(-.3f, .05f, -.07f), Quaternion.identity);
 		RotateObject.Objective = GameObject.FindGameObjectWithTag("Objective");
 	}
 

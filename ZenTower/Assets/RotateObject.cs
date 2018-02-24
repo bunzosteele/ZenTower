@@ -5,10 +5,18 @@ public class RotateObject : MonoBehaviour {
 	{
 		m_trackedObject = GetComponent<SteamVR_TrackedObject>();
 		Objective = GameObject.FindGameObjectWithTag("Objective");
+		previousAngle = -1f;
 	}
 	
 	private void Update ()
 	{
+		if(Objective == null)
+		{
+			Objective = GameObject.FindGameObjectWithTag("Objective");
+			if (Objective == null)
+				return;
+		}
+
 		if(m_controller == null)
 		{
 			Debug.Log("No controller found.");
@@ -36,14 +44,24 @@ public class RotateObject : MonoBehaviour {
 		if (grabbedObject == null)
 			return;
 
-		Objective.GetComponent<Rigidbody>().useGravity = true;
-
 		float nearestAngle = grabbedObject.transform.rotation.eulerAngles.y % c_angleLock > c_angleLock / 2
 			? (float) System.Math.Ceiling(grabbedObject.transform.rotation.eulerAngles.y / c_angleLock) * c_angleLock
 			: (float) System.Math.Floor(grabbedObject.transform.rotation.eulerAngles.y / c_angleLock) * c_angleLock;
 
 		grabbedObject.transform.Rotate(0, (nearestAngle - grabbedObject.transform.rotation.eulerAngles.y), 0);
+
 		Objective.transform.Translate(new Vector3(0, 0.0001f, 0));
+		Objective.GetComponent<Rigidbody>().useGravity = true;
+
+		if (grabbedObject != previousObject && nearestAngle != previousAngle)
+		{
+			grabbedObject.transform.parent.GetComponent<StarManager>().RemoveStar();
+			previousObject = grabbedObject;
+			previousAngle = nearestAngle;
+		}
+
+		if (previousObject == null && previousAngle == -1f)
+			previousObject = grabbedObject;
 
 		grabbedObject = null;
 	}
@@ -54,12 +72,16 @@ public class RotateObject : MonoBehaviour {
 			? hoverObject
 			: null;
 
+		if (grabbedObject == null)
+			return;
+
 		Objective.GetComponent<Rigidbody>().useGravity = false;
 
 		if (grabbedObject != null)
 		{
 			m_initialControllerPosition = m_controller.transform.pos;
 			m_initialObjectPosition = grabbedObject.transform.position;
+			previousAngle = grabbedObject.transform.rotation.eulerAngles.y;
 		}
 	}
 
@@ -92,6 +114,10 @@ public class RotateObject : MonoBehaviour {
 	private GameObject hoverObject;
 	[SerializeField]
 	private GameObject grabbedObject;
+	[SerializeField]
+	private GameObject previousObject = null;
+	[SerializeField]
+	private float previousAngle;
 
 	const string c_tag = "Twistable";
 	const int c_angleLock = 90;
