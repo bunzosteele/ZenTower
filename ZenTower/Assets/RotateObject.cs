@@ -76,10 +76,9 @@ public class RotateObject : MonoBehaviour {
 			return;
 
 		Objective.GetComponent<Rigidbody>().useGravity = false;
-
 		if (grabbedObject != null)
 		{
-			m_initialControllerPosition = m_controller.transform.pos;
+			m_initialControllerPosition = m_trackedObject.transform.position;
 			m_initialObjectPosition = grabbedObject.transform.position;
 			previousAngle = grabbedObject.transform.rotation.eulerAngles.y;
 		}
@@ -87,14 +86,34 @@ public class RotateObject : MonoBehaviour {
 
 	private void TwistObject()
 	{
-		Vector2 initialVector = new Vector2(m_initialObjectPosition.x - m_initialControllerPosition.x, m_initialObjectPosition.z - m_initialControllerPosition.z);
-		Vector2 currentVector = new Vector2(m_initialObjectPosition.x - m_controller.transform.pos.x, m_initialObjectPosition.z - m_controller.transform.pos.z);
-		float sign = (initialVector.y < currentVector.y) ? 1.0f : -1.0f;
-		var angle = Vector2.Angle(initialVector, currentVector) * sign;
+		var dX = System.Math.Abs(m_initialControllerPosition.x - m_trackedObject.transform.position.x);
+		var dZ = System.Math.Abs(m_initialControllerPosition.z - m_trackedObject.transform.position.z);
+
+		float degrees = 360 / towerSides;
+		float angle = 0;
+		if (dX > dZ)
+		{
+			float signPosition = (m_initialObjectPosition.z > m_trackedObject.transform.position.z) ? 1.0f : -1.0f;
+			float signDirection = (m_initialControllerPosition.x > m_trackedObject.transform.position.x) ? 1.0f : -1.0f;
+			angle = (dX / towerSize) * degrees * signPosition * signDirection;
+		}
+		else
+		{
+			float signPosition = (m_initialObjectPosition.x > m_trackedObject.transform.position.x) ? 1.0f : -1.0f;
+			float signDirection = (m_initialControllerPosition.z < m_trackedObject.transform.position.z) ? 1.0f : -1.0f;
+			angle = (dZ / towerSize) * degrees * signPosition * signDirection;
+		}
 
 		grabbedObject.transform.Rotate(0, angle, 0);
-		m_initialControllerPosition = m_controller.transform.pos;
+		m_initialControllerPosition = m_trackedObject.transform.position;
 		m_initialObjectPosition = grabbedObject.transform.position;
+	}
+
+	public void Reset()
+	{
+		grabbedObject = null;
+		previousAngle = -1f;
+		previousObject = null;
 	}
 
 	private void OnTriggerStay(Collider other)
@@ -118,6 +137,12 @@ public class RotateObject : MonoBehaviour {
 	private GameObject previousObject = null;
 	[SerializeField]
 	private float previousAngle;
+	[SerializeField]
+	public float towerSize;
+	[SerializeField]
+	public float towerSides;
+
+
 
 	const string c_tag = "Twistable";
 	const int c_angleLock = 90;

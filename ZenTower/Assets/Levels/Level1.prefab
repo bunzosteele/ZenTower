@@ -12140,7 +12140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e636fc328c4f2fe42937f68e18a7628c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: {fileID: 1599846670615760, guid: 4ff77c21bf34354478b9fd3408c7ce38, type: 2}
+  thisLevel: {fileID: 1289556513934986}
+  nextLevel: {fileID: 1599846670615760, guid: 4ff77c21bf34354478b9fd3408c7ce38, type: 2}
 --- !u!114 &114497226924105986
 MonoBehaviour:
   m_ObjectHideFlags: 1
