@@ -3,7 +3,7 @@
 public class RotateObject : MonoBehaviour {
 	private void Start ()
 	{
-		m_trackedObject = GetComponent<SteamVR_TrackedObject>();
+		m_trackedObject = GetComponent<SteamVR_TrackedController>();
 		Objective = GameObject.FindGameObjectWithTag("Objective");
 		previousAngle = -1f;
 	}
@@ -55,7 +55,7 @@ public class RotateObject : MonoBehaviour {
 
 		if (grabbedObject != previousObject && nearestAngle != previousAngle)
 		{
-			grabbedObject.transform.parent.GetComponent<StarManager>().RemoveStar();
+			grabbedObject.transform.parent.parent.GetComponent<StarManager>().RemoveStar();
 			previousObject = grabbedObject;
 			previousAngle = nearestAngle;
 		}
@@ -147,8 +147,8 @@ public class RotateObject : MonoBehaviour {
 	const string c_tag = "Twistable";
 	const int c_angleLock = 90;
 	private Valve.VR.EVRButtonId m_triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
-	private SteamVR_Controller.Device m_controller { get { return SteamVR_Controller.Input((int) m_trackedObject.index); } }
-	private SteamVR_TrackedObject m_trackedObject;
+	private SteamVR_Controller.Device m_controller { get { return SteamVR_Controller.Input((int) m_trackedObject.controllerIndex); } }
+	private SteamVR_TrackedController m_trackedObject;
 	private Vector3 m_initialControllerPosition;
 	private Vector3 m_initialObjectPosition;
 	public static GameObject Objective { get; set; }

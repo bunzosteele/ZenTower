@@ -8,6 +8,9 @@ TagManager:
   - Twistable
   - Objective
   - Tower
+  - Menu
+  - Lazer
+  - Level
   layers:
   - Default
   - TransparentFX

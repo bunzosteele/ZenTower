@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Objective : MonoBehaviour {
@@ -8,12 +7,14 @@ public class Objective : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		var currentLevel = gameObject.transform.parent.gameObject;
-		for(int i = 0; i < currentLevel.transform.childCount -1; i++)
+		for(int i = 0; i < currentLevel.transform.childCount; i++)
 		{
-			rotations.Add(currentLevel.transform.GetChild(i).transform.rotation.eulerAngles.y);
+			var child = currentLevel.transform.GetChild(i);
+			if(child.tag == "Twistable")
+				rotations.Add(currentLevel.transform.GetChild(i).transform.rotation.eulerAngles.y);
 		}
 
-		initialObjectivePosition = gameObject.transform.position;
+		initialObjectivePosition = gameObject.transform.localPosition;
 	}
 	
 	// Update is called once per frame
@@ -21,7 +22,7 @@ public class Objective : MonoBehaviour {
 		if(gameObject.transform.position.y < -.1)
 		{
 			DeleteTower();
-			CreateTower();
+			CreateTower(gameObject.transform.parent.parent.parent.transform.localScale);
 		}else if(Math.Abs(gameObject.transform.position.x) > 1 || Math.Abs(gameObject.transform.position.z) > 1)
 		{
 			ResetTower();
@@ -30,7 +31,7 @@ public class Objective : MonoBehaviour {
 
 	private void DeleteTower()
 	{
-		var currentLevel = gameObject.transform.parent.parent.gameObject;
+		var currentLevel = gameObject.transform.parent.parent.parent.gameObject;
 		foreach (Transform child in currentLevel.transform)
 		{
 			Destroy(child.gameObject);
@@ -38,24 +39,33 @@ public class Objective : MonoBehaviour {
 		Destroy(currentLevel);
 	}
 
-	private void CreateTower()
+	private void CreateTower(Vector3 scale)
 	{
-		Instantiate(nextLevel, new Vector3(-.3f, .05f, -.07f), Quaternion.identity);
+		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
+		newLevel.transform.localScale = scale;
 		RotateObject.Objective = GameObject.FindGameObjectWithTag("Objective");
 	}
 
 	private void ResetTower()
 	{
-		var currentLevel = gameObject.transform.parent.parent.gameObject;
+		var currentLevel = gameObject.transform.parent.parent.parent.gameObject;
+		var currentTower = gameObject.transform.parent.parent.gameObject;
+		currentLevel.GetComponent<StarManager>().ResetStars();
+
 		int i = 0;
-		foreach (float rotation in rotations)
+
+		foreach (Transform child in currentTower.transform)
 		{
-			currentLevel.transform.GetChild(i).transform.localEulerAngles = new Vector3 (0, rotation, 0);
-			i++;
+			if(child.tag == "Twistable")
+			{
+				currentTower.transform.GetChild(i).transform.localEulerAngles = new Vector3(0, rotations[i], 0);
+				i++;
+			}
 		}
 
-		gameObject.transform.SetParent(currentLevel.transform);
-		gameObject.transform.SetPositionAndRotation(initialObjectivePosition, Quaternion.identity);
+		gameObject.transform.SetParent(currentTower.transform);
+		gameObject.transform.localPosition = initialObjectivePosition;
+		gameObject.transform.localRotation = Quaternion.identity;
 		gameObject.GetComponent<Rigidbody>().isKinematic = true;
 		gameObject.GetComponent<Rigidbody>().isKinematic = false;
 		foreach (var controller in GameObject.FindGameObjectsWithTag("GameController"))
@@ -64,7 +74,6 @@ public class Objective : MonoBehaviour {
 			if(rotateObjectScript != null)
 				rotateObjectScript.Reset();
 		}
-		currentLevel.GetComponent<StarManager>().ResetStars();
 	}
 
 	public GameObject nextLevel;

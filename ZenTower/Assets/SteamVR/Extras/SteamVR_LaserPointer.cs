@@ -16,7 +16,7 @@ public delegate void PointerEventHandler(object sender, PointerEventArgs e);
 public class SteamVR_LaserPointer : MonoBehaviour
 {
     public bool active = true;
-    public Color color;
+    public Color color = new Color(255, 0 ,0);
     public float thickness = 0.002f;
     public GameObject holder;
     public GameObject pointer;
@@ -37,6 +37,7 @@ public class SteamVR_LaserPointer : MonoBehaviour
 		holder.transform.localRotation = Quaternion.identity;
 
 		pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		pointer.transform.tag = "Lazer";
         pointer.transform.parent = holder.transform;
         pointer.transform.localScale = new Vector3(thickness, thickness, 100f);
         pointer.transform.localPosition = new Vector3(0f, 0f, 50f);
@@ -84,6 +85,9 @@ public class SteamVR_LaserPointer : MonoBehaviour
             isActive = true;
             this.transform.GetChild(0).gameObject.SetActive(true);
         }
+
+		if (pointer == null)
+			return;
 
         float dist = 100f;
 
