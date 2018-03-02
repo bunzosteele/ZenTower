@@ -29,9 +29,9 @@ public class Objective : MonoBehaviour {
 		}
 	}
 
-	private void DeleteTower()
+	public void DeleteTower()
 	{
-		var currentLevel = gameObject.transform.parent.parent.parent.gameObject;
+		var currentLevel = GameObject.FindGameObjectWithTag("Level");
 		foreach (Transform child in currentLevel.transform)
 		{
 			Destroy(child.gameObject);
@@ -39,14 +39,14 @@ public class Objective : MonoBehaviour {
 		Destroy(currentLevel);
 	}
 
-	private void CreateTower(Vector3 scale)
+	public void CreateTower(Vector3 scale)
 	{
 		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
 		newLevel.transform.localScale = scale;
 		RotateObject.Objective = GameObject.FindGameObjectWithTag("Objective");
 	}
 
-	private void ResetTower()
+	public void ResetTower()
 	{
 		var currentLevel = gameObject.transform.parent.parent.parent.gameObject;
 		var currentTower = gameObject.transform.parent.parent.gameObject;
