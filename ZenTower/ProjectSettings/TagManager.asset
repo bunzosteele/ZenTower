@@ -11,6 +11,8 @@ TagManager:
   - Menu
   - Lazer
   - Level
+  - NavButton
+  - DeleteButton
   layers:
   - Default
   - TransparentFX

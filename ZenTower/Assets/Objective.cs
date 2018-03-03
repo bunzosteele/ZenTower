@@ -21,6 +21,9 @@ public class Objective : MonoBehaviour {
 	void Update () {
 		if(gameObject.transform.position.y < -.1)
 		{
+			var level = gameObject.transform.parent.parent.parent;
+			SaveManager.SaveData(level.name.Split('(')[0], level.GetComponent<StarManager>().GetScore());
+			GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().ReloadNavigation();
 			DeleteTower();
 			CreateTower(gameObject.transform.parent.parent.parent.transform.localScale);
 		}else if(Math.Abs(gameObject.transform.position.x) > 1 || Math.Abs(gameObject.transform.position.z) > 1)
@@ -50,7 +53,6 @@ public class Objective : MonoBehaviour {
 	{
 		var currentLevel = gameObject.transform.parent.parent.parent.gameObject;
 		var currentTower = gameObject.transform.parent.parent.gameObject;
-		currentLevel.GetComponent<StarManager>().ResetStars();
 
 		int i = 0;
 
@@ -74,6 +76,8 @@ public class Objective : MonoBehaviour {
 			if(rotateObjectScript != null)
 				rotateObjectScript.Reset();
 		}
+
+		currentLevel.GetComponent<StarManager>().ResetStars();
 	}
 
 	public GameObject nextLevel;
