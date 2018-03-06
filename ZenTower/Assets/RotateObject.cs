@@ -52,6 +52,7 @@ public class RotateObject : MonoBehaviour {
 
 		Objective.transform.Translate(new Vector3(0, 0.0001f, 0));
 		Objective.GetComponent<Rigidbody>().useGravity = true;
+		Objective.GetComponent<Rigidbody>().isKinematic = false;
 
 		if (grabbedObject != previousObject && nearestAngle != previousAngle)
 		{
@@ -76,6 +77,7 @@ public class RotateObject : MonoBehaviour {
 			return;
 
 		Objective.GetComponent<Rigidbody>().useGravity = false;
+		Objective.GetComponent<Rigidbody>().isKinematic = true;
 		if (grabbedObject != null)
 		{
 			m_initialControllerPosition = m_trackedObject.transform.position;

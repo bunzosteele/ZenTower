@@ -7,6 +7,11 @@ public class MenuToggle : MonoBehaviour {
 		m_trackedObject.MenuButtonUnclicked -= ToggleMenu;
 		m_trackedObject.MenuButtonUnclicked += ToggleMenu;
 		m_menu = GameObject.FindGameObjectWithTag(c_menuTag);
+		gameObject.AddComponent<SteamVR_LaserPointer>();
+		gameObject.AddComponent<InterfaceInput>();
+		gameObject.GetComponent<SteamVR_LaserPointer>().enabled = false;
+		gameObject.GetComponent<InterfaceInput>().enabled = false;
+		isMenuOpen = false;
 	}
 
 	private void ToggleMenu(object sender, ClickedEventArgs e)
@@ -15,23 +20,29 @@ public class MenuToggle : MonoBehaviour {
 		{
 			Debug.Log("Activating Menu");
 			m_menu.transform.position = new Vector3(.3f, 1f, -1.5f);
-			gameObject.AddComponent<SteamVR_LaserPointer>();
-			gameObject.AddComponent<InterfaceInput>();
-
-			return;
+			gameObject.GetComponent<SteamVR_LaserPointer>().enabled = true;
+			gameObject.GetComponent<InterfaceInput>().enabled = true;
+			var lazers = GameObject.FindGameObjectsWithTag(c_lazerTag);
+			foreach (var lazer in lazers)
+			{
+				lazer.GetComponent<MeshRenderer>().enabled = true;
+			}
+			isMenuOpen = true;
 		}
 		else
 		{
 			Debug.Log("Disabling Menu");
 			m_menu.transform.position = new Vector3(.3f, -1f, -1.5f);
-			Destroy(gameObject.GetComponent<InterfaceInput>());
-			Destroy(gameObject.GetComponent<SteamVR_LaserPointer>());
-
+			m_menu.GetComponent<LevelNavigation>().ToggleIsDeleting(false);
+			gameObject.GetComponent<SteamVR_LaserPointer>().enabled = false;
+			gameObject.GetComponent<InterfaceInput>().enabled = false;
 			var lazers = GameObject.FindGameObjectsWithTag(c_lazerTag);
-			foreach (GameObject lazer in lazers)
+
+			foreach(var lazer in lazers)
 			{
-				Destroy(lazer);
+				lazer.GetComponent<MeshRenderer>().enabled = false;
 			}
+			isMenuOpen = false;
 		}
 	}
 
@@ -41,4 +52,5 @@ public class MenuToggle : MonoBehaviour {
 	private SteamVR_TrackedController m_trackedObject;
 	private GameObject m_menu;
 	public static GameObject Objective { get; set; }
+	public static bool isMenuOpen = false;
 }

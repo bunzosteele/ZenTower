@@ -4,8 +4,11 @@ public class LevelReset : MonoBehaviour {
 
 	public void ResetLevel()
 	{
-		var objective = GameObject.FindGameObjectWithTag(c_objectiveTag);
-		objective.GetComponent<Objective>().ResetTower();
+		if (MenuToggle.isMenuOpen)
+		{
+			var objective = GameObject.FindGameObjectWithTag(c_objectiveTag);
+			objective.GetComponent<Objective>().ResetTower();
+		}
 	}
 
 	const string c_objectiveTag = "Objective";

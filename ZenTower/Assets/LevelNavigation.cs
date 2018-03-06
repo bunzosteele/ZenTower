@@ -17,6 +17,7 @@ public class LevelNavigation : MonoBehaviour {
 
 		foreach(GameObject button in buttons)
 		{
+			button.GetComponent<Button>().onClick.RemoveAllListeners();
 			Destroy(button);
 		}
 
@@ -39,6 +40,7 @@ public class LevelNavigation : MonoBehaviour {
 			newButton.transform.localScale = new Vector3(1f, 1f, 1f);
 			newButton.transform.localEulerAngles = new Vector3(0, 0, 0);
 			newButton.transform.localPosition = new Vector3(x, y, 0);
+			newButton.GetComponent<Button>().onClick.RemoveAllListeners();
 			newButton.GetComponent<Button>().onClick.AddListener(delegate { ChangeLevel(level); });
 			if (saveData.ContainsKey(level))
 			{
@@ -76,27 +78,34 @@ public class LevelNavigation : MonoBehaviour {
 
 	public void ChangeLevel(string levelName)
 	{
-		ToggleIsDeleting(false);
-		GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + levelName + ".prefab");
-		var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
-		var objective = GameObject.FindGameObjectWithTag(c_objectiveTag);
-		objective.GetComponent<Objective>().DeleteTower();
-		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
-		newLevel.transform.localScale = currentLevel.transform.localScale;
-		RotateObject.Objective = GameObject.FindGameObjectWithTag("Objective");
+		if (MenuToggle.isMenuOpen)
+		{
+			ToggleIsDeleting(false);
+			GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + levelName + ".prefab");
+			var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
+			var objective = GameObject.FindGameObjectWithTag(c_objectiveTag);
+			objective.GetComponent<Objective>().DeleteTower();
+			GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
+			newLevel.transform.localScale = currentLevel.transform.localScale;
+			var newObjective = GameObject.FindGameObjectWithTag("Objective");
+			RotateObject.Objective = newObjective;
+		}
 	}
 
 	public void DeleteScores()
 	{
-		if (isDeleting)
+		if (MenuToggle.isMenuOpen)
 		{
-			SaveManager.DeleteData();
-			ReloadNavigation();
-			ToggleIsDeleting(false);
-		}
-		else
-		{
-			ToggleIsDeleting(true);
+			if (isDeleting)
+			{
+				SaveManager.DeleteData();
+				ReloadNavigation();
+				ToggleIsDeleting(false);
+			}
+			else
+			{
+				ToggleIsDeleting(true);
+			}
 		}
 	}
 

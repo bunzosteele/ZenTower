@@ -23,7 +23,7 @@ public class FloorShift : MonoBehaviour {
 
 
 	[SerializeField]
-	private GameObject currentFloor;
+	public GameObject currentFloor;
 	const string c_tag = "Twistable";
 	const float c_floorHeight = .1f;
 }

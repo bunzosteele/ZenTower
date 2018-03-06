@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Objective : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		var currentLevel = gameObject.transform.parent.gameObject;
-		for(int i = 0; i < currentLevel.transform.childCount; i++)
-		{
-			var child = currentLevel.transform.GetChild(i);
-			if(child.tag == "Twistable")
-				rotations.Add(currentLevel.transform.GetChild(i).transform.rotation.eulerAngles.y);
-		}
+		currentLevelName = gameObject.transform.parent.parent.gameObject.name.Split('(')[0];
 
 		initialObjectivePosition = gameObject.transform.localPosition;
 	}
@@ -22,11 +17,11 @@ public class Objective : MonoBehaviour {
 		if(gameObject.transform.position.y < -.1)
 		{
 			var level = gameObject.transform.parent.parent.parent;
-			SaveManager.SaveData(level.name.Split('(')[0], level.GetComponent<StarManager>().GetScore());
+			SaveManager.SaveData(currentLevelName, level.GetComponent<StarManager>().GetScore());
 			GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().ReloadNavigation();
 			DeleteTower();
 			CreateTower(gameObject.transform.parent.parent.parent.transform.localScale);
-		}else if(Math.Abs(gameObject.transform.position.x) > 1 || Math.Abs(gameObject.transform.position.z) > 1)
+		}else if(Math.Abs(gameObject.transform.position.x) > 1.5 || Math.Abs(gameObject.transform.position.z) > 1.5)
 		{
 			ResetTower();
 		}
@@ -51,8 +46,31 @@ public class Objective : MonoBehaviour {
 
 	public void ResetTower()
 	{
-		var currentLevel = gameObject.transform.parent.parent.parent.gameObject;
-		var currentTower = gameObject.transform.parent.parent.gameObject;
+		var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
+		GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + currentLevelName + ".prefab");
+		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
+		DeleteTower();
+		newLevel.transform.localScale = currentLevel.transform.localScale;
+		var newObjective = GameObject.FindGameObjectWithTag("Objective");
+		RotateObject.Objective = newObjective;
+	}
+
+	/*
+	public void ResetTower()
+	{
+		GameObject currentLevel;
+		GameObject currentTower;
+		if(gameObject.transform.parent.parent.parent != null)
+		{
+			currentLevel = gameObject.transform.parent.parent.parent.gameObject;
+			currentTower = gameObject.transform.parent.parent.gameObject;
+		}
+		else
+		{
+			currentLevel = gameObject.transform.parent.parent.gameObject;
+			currentTower = gameObject.transform.parent.gameObject;
+		}
+
 
 		int i = 0;
 
@@ -78,10 +96,13 @@ public class Objective : MonoBehaviour {
 		}
 
 		currentLevel.GetComponent<StarManager>().ResetStars();
-	}
+	}*/
 
+	const string c_filePath = "Assets/Levels/";
+	const string c_objectiveTag = "Objective";
+	const string c_levelTag = "Level";
+	public string currentLevelName;
 	public GameObject nextLevel;
-
 	private List<float> rotations = new List<float>();
 	private Vector3 initialObjectivePosition;
 }
