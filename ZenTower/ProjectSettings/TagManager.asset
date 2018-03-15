@@ -13,6 +13,8 @@ TagManager:
   - Level
   - NavButton
   - DeleteButton
+  - Spike
+  - Tutorial
   layers:
   - Default
   - TransparentFX

@@ -16,10 +16,13 @@ public class MenuToggle : MonoBehaviour {
 
 	private void ToggleMenu(object sender, ClickedEventArgs e)
 	{
+		var tutorial = GameObject.FindGameObjectWithTag("Level").GetComponent<TutorialTwo>();
 		if (m_menu.transform.position.y < 0)
 		{
-			Debug.Log("Activating Menu");
-			m_menu.transform.position = new Vector3(.3f, 1f, -1.5f);
+			if (tutorial != null)
+				tutorial.CompleteFirstStep();
+
+			m_menu.transform.position = new Vector3(.1f, 1f, 1.8f);
 			gameObject.GetComponent<SteamVR_LaserPointer>().enabled = true;
 			gameObject.GetComponent<InterfaceInput>().enabled = true;
 			var lazers = GameObject.FindGameObjectsWithTag(c_lazerTag);
@@ -31,8 +34,10 @@ public class MenuToggle : MonoBehaviour {
 		}
 		else
 		{
-			Debug.Log("Disabling Menu");
-			m_menu.transform.position = new Vector3(.3f, -1f, -1.5f);
+			if (tutorial != null)
+				tutorial.CompleteThirdStep();
+
+			m_menu.transform.position = new Vector3(.1f, -1f, 1.8f);
 			m_menu.GetComponent<LevelNavigation>().ToggleIsDeleting(false);
 			gameObject.GetComponent<SteamVR_LaserPointer>().enabled = false;
 			gameObject.GetComponent<InterfaceInput>().enabled = false;

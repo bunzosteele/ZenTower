@@ -1,7 +1,6 @@
-﻿
-	using UnityEngine;
-	using System.Collections;
-	using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 public class MaterialColorSwapHighlighter : BaseHighlighter
@@ -101,7 +100,7 @@ public class MaterialColorSwapHighlighter : BaseHighlighter
 
 		protected virtual void ChangeToHighlightColor(Color color, float duration = 0f)
 		{
-			foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true).Where(r => r.tag != "Objective"))
+			foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true).Where(r => r.tag != "Objective" && r.tag != "Tutorial"))
 			{
 				var swapCustomMaterials = new Material[renderer.materials.Length];
 

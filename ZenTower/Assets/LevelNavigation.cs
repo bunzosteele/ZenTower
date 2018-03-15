@@ -27,7 +27,8 @@ public class LevelNavigation : MonoBehaviour {
 	private void Initialize()
 	{
 		DirectoryInfo directory = new DirectoryInfo(c_filePath);
-		FileInfo[] infos = directory.GetFiles("*.prefab");
+		List<FileInfo> infos = new List<FileInfo>(directory.GetFiles("*.prefab"));
+		infos.Sort(new FileComparer());
 		float x = -175;
 		float y = 150;
 		Dictionary<string, int> saveData = SaveManager.LoadData();
@@ -80,6 +81,7 @@ public class LevelNavigation : MonoBehaviour {
 	{
 		if (MenuToggle.isMenuOpen)
 		{
+			CompleteTutorials();
 			ToggleIsDeleting(false);
 			GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + levelName + ".prefab");
 			var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
@@ -109,6 +111,22 @@ public class LevelNavigation : MonoBehaviour {
 		}
 	}
 
+	private void CompleteTutorials()
+	{
+		var level = GameObject.FindGameObjectWithTag(c_levelTag);
+		var tutorialOne = level.GetComponent<TutorialOne>();
+		if (tutorialOne != null)
+			tutorialOne.CompleteSecondStep();
+
+		var tutorialTwo = level.GetComponent<TutorialTwo>();
+		if (tutorialTwo != null)
+			tutorialTwo.CompleteThirdStep();
+
+		var tutorialThree = level.GetComponent<TutorialThree>();
+		if (tutorialThree != null)
+			tutorialThree.CompleteFirstStep();
+	}
+
 	public void ToggleIsDeleting(bool isOn)
 	{
 		if (isOn)
@@ -120,6 +138,16 @@ public class LevelNavigation : MonoBehaviour {
 		{
 			GameObject.FindGameObjectWithTag(c_deleteButtonTag).transform.GetChild(0).GetComponent<Text>().text = "Delete Scores";
 			isDeleting = false;
+		}
+	}
+
+	private class FileComparer: Comparer<FileInfo>
+	{
+		public override int Compare(FileInfo x, FileInfo y)
+		{
+			var intX = int.Parse(x.Name.Split('.')[0]);
+			var intY = int.Parse(y.Name.Split('.')[0]);
+			return intX - intY;
 		}
 	}
 

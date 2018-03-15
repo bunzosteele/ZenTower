@@ -13,6 +13,9 @@ public class TowerResize : MonoBehaviour {
 			tower.transform.localScale = new Vector3(scale.x - .1f, scale.y - .1f, scale.z - .1f);
 
 			GameObject.FindGameObjectWithTag(c_menuTag).GetComponent<LevelNavigation>().ToggleIsDeleting(false);
+			float newSize = RotateObject.s_towerSize * .9f;
+			RotateObject.s_towerSize = newSize;
+			SettingsManager.SaveData(new SettingsManager.Settings { Scale = tower.transform.localScale.y });
 		}
 	}
 
@@ -27,6 +30,9 @@ public class TowerResize : MonoBehaviour {
 			tower.transform.localScale = new Vector3(scale.x + .1f, scale.y + .1f, scale.z + .1f);
 
 			GameObject.FindGameObjectWithTag(c_menuTag).GetComponent<LevelNavigation>().ToggleIsDeleting(false);
+			float newSize = RotateObject.s_towerSize * 1.1f;
+			RotateObject.s_towerSize = newSize;
+			SettingsManager.SaveData(new SettingsManager.Settings { Scale = tower.transform.localScale.y });
 		}
 	}
 

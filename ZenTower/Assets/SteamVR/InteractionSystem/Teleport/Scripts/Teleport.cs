@@ -896,6 +896,10 @@ namespace Valve.VR.InteractionSystem
 			}
 
 			Teleport.Player.Send( pointedAtTeleportMarker );
+			var level = GameObject.FindGameObjectWithTag("Level");
+			var tutorialThree = level.GetComponent<TutorialThree>();
+			if (tutorialThree != null)
+				tutorialThree.CompleteFirstStep();
 		}
 
 

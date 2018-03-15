@@ -32,7 +32,6 @@ public static class SaveManager
 
 		string jsonToWrite = JsonConvert.SerializeObject(parsedSave);
 		File.WriteAllText(Application.persistentDataPath + c_fileName, jsonToWrite);
-
 	}
 
 	public static Dictionary<string, int> LoadData()

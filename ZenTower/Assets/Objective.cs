@@ -5,23 +5,32 @@ using UnityEngine;
 
 public class Objective : MonoBehaviour {
 
-	// Use this for initialization
 	void Start () {
 		currentLevelName = gameObject.transform.parent.parent.gameObject.name.Split('(')[0];
 
 		initialObjectivePosition = gameObject.transform.localPosition;
+
+		var scale = SettingsManager.LoadData().Scale;
+		if (scale.HasValue) {
+			var tower = GameObject.FindGameObjectWithTag(c_levelTag);
+			tower.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
+			RotateObject.s_towerSize *= scale.Value;
+		}
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if(gameObject.transform.position.y < -.1)
 		{
+			CompleteTutorials();
 			var level = gameObject.transform.parent.parent.parent;
 			SaveManager.SaveData(currentLevelName, level.GetComponent<StarManager>().GetScore());
 			GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().ReloadNavigation();
 			DeleteTower();
 			CreateTower(gameObject.transform.parent.parent.parent.transform.localScale);
 		}else if(Math.Abs(gameObject.transform.position.x) > 1.5 || Math.Abs(gameObject.transform.position.z) > 1.5)
+		{
+			ResetTower();
+		}else if (touchedObject != null)
 		{
 			ResetTower();
 		}
@@ -55,54 +64,43 @@ public class Objective : MonoBehaviour {
 		RotateObject.Objective = newObjective;
 	}
 
-	/*
-	public void ResetTower()
+	private void OnTriggerStay(Collider other)
 	{
-		GameObject currentLevel;
-		GameObject currentTower;
-		if(gameObject.transform.parent.parent.parent != null)
+		if (other.CompareTag(c_spikeTag))
 		{
-			currentLevel = gameObject.transform.parent.parent.parent.gameObject;
-			currentTower = gameObject.transform.parent.parent.gameObject;
+			touchedObject = other.gameObject;
 		}
-		else
-		{
-			currentLevel = gameObject.transform.parent.parent.gameObject;
-			currentTower = gameObject.transform.parent.gameObject;
-		}
+	}
 
+	private void OnTriggerExit(Collider other)
+	{
+		touchedObject = null;
+	}
 
-		int i = 0;
+	private void CompleteTutorials()
+	{
+		var level = GameObject.FindGameObjectWithTag(c_levelTag);
+		var tutorialOne = level.GetComponent<TutorialOne>();
+		if (tutorialOne != null)
+			tutorialOne.CompleteSecondStep();
 
-		foreach (Transform child in currentTower.transform)
-		{
-			if(child.tag == "Twistable")
-			{
-				currentTower.transform.GetChild(i).transform.localEulerAngles = new Vector3(0, rotations[i], 0);
-				i++;
-			}
-		}
+		var tutorialTwo = level.GetComponent<TutorialTwo>();
+		if (tutorialTwo != null)
+			tutorialTwo.CompleteThirdStep();
 
-		gameObject.transform.SetParent(currentTower.transform);
-		gameObject.transform.localPosition = initialObjectivePosition;
-		gameObject.transform.localRotation = Quaternion.identity;
-		gameObject.GetComponent<Rigidbody>().isKinematic = true;
-		gameObject.GetComponent<Rigidbody>().isKinematic = false;
-		foreach (var controller in GameObject.FindGameObjectsWithTag("GameController"))
-		{
-			var rotateObjectScript = controller.GetComponent<RotateObject>();
-			if(rotateObjectScript != null)
-				rotateObjectScript.Reset();
-		}
+		var tutorialThree = level.GetComponent<TutorialThree>();
+		if (tutorialThree != null)
+			tutorialThree.CompleteFirstStep();
+	}
 
-		currentLevel.GetComponent<StarManager>().ResetStars();
-	}*/
 
 	const string c_filePath = "Assets/Levels/";
 	const string c_objectiveTag = "Objective";
 	const string c_levelTag = "Level";
+	const string c_spikeTag = "Spike";
 	public string currentLevelName;
 	public GameObject nextLevel;
+	public GameObject touchedObject;
 	private List<float> rotations = new List<float>();
 	private Vector3 initialObjectivePosition;
 }

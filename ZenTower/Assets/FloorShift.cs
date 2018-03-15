@@ -6,14 +6,14 @@ public class FloorShift : MonoBehaviour {
 	
 	void Update () {
 		float currentY = gameObject.transform.position.y;
-		GameObject parent = GameObject.FindWithTag("Tower");
+		GameObject parent = GameObject.FindGameObjectWithTag("Tower");
 		foreach(Transform child in parent.transform)
 		{
 			Collider collider = child.GetComponent<Collider>();
-			if (collider == null)
+			if (collider == null || child == gameObject.transform)
 				continue;
 
-			if (currentY > child.position.y && currentY < child.position.y + collider.bounds.size.y / 2)
+			if (currentY > (child.position.y - collider.bounds.size.y / 3) && currentY < child.position.y + collider.bounds.size.y / 3 * 2)
 				currentFloor = child.gameObject;
 		}
 

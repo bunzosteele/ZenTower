@@ -4,18 +4,30 @@ using UnityEngine;
 
 public class StarManager : MonoBehaviour {
 	void Start () {
-		Vector3 relativePosition = gameObject.transform.position;
 		Stars = new List<GameObject>();
 		Vector3 towerPosition = GameObject.FindGameObjectWithTag(c_towerTag).transform.localPosition;
 		for (int i = 0; i < StarCount; i++) {
-			var createdStar = Instantiate(StarObject, new Vector3(towerPosition.x, gameObject.transform.localScale.y + .4f, towerPosition.z -(.15f * StarCount / 2) + .15f * i), Quaternion.identity);
-			createdStar.transform.localScale = new Vector3(.05f, .05f, .05f);
+			float y = 1.4f * gameObject.transform.localScale.y;
+			float scale = .05f * gameObject.transform.localScale.y;
+			float spacing = .15f * gameObject.transform.localScale.y;
+			float xPosition = towerPosition.x * gameObject.transform.localScale.x;
+			var createdStar = Instantiate(StarObject, new Vector3(xPosition, y, towerPosition.z - (spacing * StarCount / 2) + spacing * i), Quaternion.identity);
+			createdStar.transform.localScale = new Vector3(scale, scale, scale);
 			createdStar.transform.parent = gameObject.transform;
 			createdStar.transform.Rotate(new Vector3(-90, 90, 0));
+			createdStar.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 			if(i < 3)
 			{
 				var renderer = createdStar.GetComponent<Renderer>();
 				renderer.material = Resources.Load("Gold", typeof(Material)) as Material;
+			}
+
+			if(ShowTutorial && i == TutorialIndex)
+			{
+				createdStar.AddComponent<TowerTutorial>();
+				createdStar.GetComponent<TowerTutorial>().Message = TutorialMessage;
+				createdStar.GetComponent<TowerTutorial>().Position = new Vector3(0, -.3f, 0);
+				createdStar.GetComponent<TowerTutorial>().Rotation = new Vector3(0, 90, 0);
 			}
 			Stars.Add(createdStar);
 		}
@@ -31,35 +43,6 @@ public class StarManager : MonoBehaviour {
 		}
 	}
 
-	public void ResetStars()
-	{
-		while (Stars.Any())
-		{
-			GameObject starToRemove = Stars.FirstOrDefault();
-			if (starToRemove != null)
-			{
-				Stars.Remove(starToRemove);
-				Destroy(starToRemove);
-			}
-		}
-
-		Vector3 towerPosition = GameObject.FindGameObjectWithTag(c_towerTag).transform.localPosition;
-		Stars = new List<GameObject>();
-		for (int i = 0; i < StarCount; i++)
-		{
-			var createdStar = Instantiate(StarObject, new Vector3(towerPosition.x, gameObject.transform.localScale.y + .4f, towerPosition.z - (.15f * StarCount / 2) + .15f * i), Quaternion.identity);
-			createdStar.transform.localScale = new Vector3(.05f, .05f, .05f);
-			createdStar.transform.parent = gameObject.transform;
-			createdStar.transform.Rotate(new Vector3(-90, 90, 0));
-			if (i < 3)
-			{
-				var renderer = createdStar.GetComponent<Renderer>();
-				renderer.material = Resources.Load("Gold", typeof(Material)) as Material;
-			}
-			Stars.Add(createdStar);
-		}
-	}
-
 	public int GetScore()
 	{
 		return Stars.Count;
@@ -68,5 +51,8 @@ public class StarManager : MonoBehaviour {
 	const string c_towerTag = "Tower";
 	public GameObject StarObject;
 	public int StarCount;
+	public int TutorialIndex;
+	public string TutorialMessage;
+	public bool ShowTutorial;
 	private List<GameObject> Stars;
 }
