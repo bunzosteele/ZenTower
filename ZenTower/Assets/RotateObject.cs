@@ -185,6 +185,7 @@ public class RotateObject : MonoBehaviour {
 	const int c_angleLock = 90;
 	private static GameObject s_previousObject = null;
 	private static float s_previousAngle;
+	[SerializeField]
 	public static float s_towerSize = .4f;
 	public static int s_towerSides = 4;
 	private Valve.VR.EVRButtonId m_triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;

@@ -14,7 +14,10 @@ public class Objective : MonoBehaviour {
 		if (scale.HasValue) {
 			var tower = GameObject.FindGameObjectWithTag(c_levelTag);
 			tower.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
-			RotateObject.s_towerSize *= scale.Value;
+			RotateObject.s_towerSize = c_defaultTowerSize * scale.Value;
+
+			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
+			floor.transform.localScale = new Vector3(c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value);
 		}
 	}
 
@@ -98,6 +101,9 @@ public class Objective : MonoBehaviour {
 	const string c_objectiveTag = "Objective";
 	const string c_levelTag = "Level";
 	const string c_spikeTag = "Spike";
+	const string c_floorTag = "Floor";
+	const float c_defaultFloorScale = 1.2f;
+	const float c_defaultTowerSize = .4f;
 	public string currentLevelName;
 	public GameObject nextLevel;
 	public GameObject touchedObject;

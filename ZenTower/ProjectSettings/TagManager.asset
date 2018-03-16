@@ -15,6 +15,7 @@ TagManager:
   - DeleteButton
   - Spike
   - Tutorial
+  - Floor
   layers:
   - Default
   - TransparentFX

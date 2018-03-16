@@ -17,12 +17,14 @@ public class MenuToggle : MonoBehaviour {
 	private void ToggleMenu(object sender, ClickedEventArgs e)
 	{
 		var tutorial = GameObject.FindGameObjectWithTag("Level").GetComponent<TutorialTwo>();
-		if (m_menu.transform.position.y < 0)
+		if (!isMenuOpen)
 		{
 			if (tutorial != null)
 				tutorial.CompleteFirstStep();
 
-			m_menu.transform.position = new Vector3(.1f, 1f, 1.8f);
+			var controllerPosition = gameObject.transform.position;
+			var controllerRotation = gameObject.transform.localRotation.eulerAngles.y;
+			PositionMenu(controllerPosition, controllerRotation);
 			gameObject.GetComponent<SteamVR_LaserPointer>().enabled = true;
 			gameObject.GetComponent<InterfaceInput>().enabled = true;
 			var lazers = GameObject.FindGameObjectsWithTag(c_lazerTag);
@@ -38,6 +40,7 @@ public class MenuToggle : MonoBehaviour {
 				tutorial.CompleteThirdStep();
 
 			m_menu.transform.position = new Vector3(.1f, -1f, 1.8f);
+			m_menu.transform.Rotate(new Vector3(0, 360 - lastRotation, 0));
 			m_menu.GetComponent<LevelNavigation>().ToggleIsDeleting(false);
 			gameObject.GetComponent<SteamVR_LaserPointer>().enabled = false;
 			gameObject.GetComponent<InterfaceInput>().enabled = false;
@@ -51,11 +54,63 @@ public class MenuToggle : MonoBehaviour {
 		}
 	}
 
+	private void PositionMenu(Vector3 controllerPosition, float controllerRotation)
+	{
+		if (controllerRotation >= (360 - 22.5f) || controllerRotation < 22.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x, 1f, controllerPosition.z + 3f);
+			lastRotation = 0;
+		}
+		else if (controllerRotation >= 22.5 && controllerRotation < 67.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x + 1.73f, 1f, controllerPosition.z + 1.73f);
+			lastRotation = 45 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+		else if (controllerRotation >= 67.5 && controllerRotation < 112.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x + 3f, 1f, controllerPosition.z);
+			lastRotation = 90 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+		else if (controllerRotation >= 112.5 && controllerRotation < 157.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x + 1.73f, 1f, controllerPosition.z - 1.73f);
+			lastRotation = 135 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+		else if (controllerRotation >= 157.5 && controllerRotation < 202.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x, 1f, controllerPosition.z - 3f);
+			lastRotation = 180 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+		else if (controllerRotation >= 202.5 && controllerRotation < 247.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x - 1.73f, 1f, controllerPosition.z - 1.73f);
+			lastRotation = 225 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+		else if (controllerRotation >= 247.5 && controllerRotation < 292.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x - 3, 1f, controllerPosition.z);
+			lastRotation = 270 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+		else if (controllerRotation >= 292.5 && controllerRotation < 337.5)
+		{
+			m_menu.transform.position = new Vector3(controllerPosition.x - 1.73f, 1f, controllerPosition.z + 1.73f);
+			lastRotation = 315 - 360;
+			m_menu.transform.Rotate(new Vector3(0, lastRotation, 0));
+		}
+	}
+
 	const string c_menuTag = "Menu";
 	const string c_lazerTag = "Lazer";
 	private SteamVR_Controller.Device m_controller { get { return SteamVR_Controller.Input((int) m_trackedObject.controllerIndex); } }
 	private SteamVR_TrackedController m_trackedObject;
 	private GameObject m_menu;
+	private static float lastRotation;
 	public static GameObject Objective { get; set; }
 	public static bool isMenuOpen = false;
 }
