@@ -16,6 +16,7 @@ TagManager:
   - Spike
   - Tutorial
   - Floor
+  - StarCount
   layers:
   - Default
   - TransparentFX

@@ -71,10 +71,11 @@ public class TowerTutorial : MonoBehaviour
 		hintInfo.text = hintInfo.textCanvas.GetComponentInChildren<Text>();
 		hintInfo.textMesh = hintInfo.textCanvas.GetComponentInChildren<TextMesh>();
 
+		var tower = GameObject.FindGameObjectWithTag(c_towerTag);
 		hintInfo.textHintObject.SetActive(false);
-		hintInfo.textEndAnchor.position += Position;
+		hintInfo.textEndAnchor.position += Position * tower.transform.lossyScale.y;
 		hintInfo.canvasOffset.Rotate(Rotation);
-		hintInfo.canvasOffset.position += Position;
+		hintInfo.canvasOffset.position += Position * tower.transform.lossyScale.y;
 
 		hintInfo.textStartAnchor.position = hintStartPos;
 
@@ -149,6 +150,7 @@ public class TowerTutorial : MonoBehaviour
 		public bool textHintActive = false;
 	}
 
+	const string c_towerTag = "Tower";
 	private TowerHintInfo towerHintInfo;
 	private Coroutine hintCoroutine = null;
 	private GameObject textHintPrefab;

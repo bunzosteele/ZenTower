@@ -13272,8 +13272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Position: {x: 0.4, y: 0, z: 0.4}
-  Rotation: {x: 0, y: 140, z: 0}
-  Message: Rotating a floor repeatedly only costs 1 star
+  Rotation: {x: -20, y: 140, z: 0}
+  Message: When you grab a floor, the ball freezes.
 --- !u!114 &114650004880590028
 MonoBehaviour:
   m_ObjectHideFlags: 1

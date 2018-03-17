@@ -13,7 +13,7 @@ public class TutorialTwo : MonoBehaviour
 
 	public void ShowHint()
 	{
-		hintCoroutine = StartCoroutine(HintCoroutine("The menu button will open a menu off to the side.", EVRButtonId.k_EButton_ApplicationMenu));
+		hintCoroutine = StartCoroutine(HintCoroutine("The top button opens the menu.", EVRButtonId.k_EButton_ApplicationMenu));
 	}
 
 	public void CompleteFirstStep()
@@ -41,7 +41,7 @@ public class TutorialTwo : MonoBehaviour
 			}
 
 			StopCoroutine(hintCoroutine);
-			hintCoroutine = StartCoroutine(HintCoroutine("Press the menu button again to close.", EVRButtonId.k_EButton_ApplicationMenu));
+			hintCoroutine = StartCoroutine(HintCoroutine("Press the top button again to close.", EVRButtonId.k_EButton_ApplicationMenu));
 		}
 	}
 

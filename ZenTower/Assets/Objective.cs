@@ -17,7 +17,8 @@ public class Objective : MonoBehaviour {
 			RotateObject.s_towerSize = c_defaultTowerSize * scale.Value;
 
 			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
-			floor.transform.localScale = new Vector3(c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value);
+			if(floor.transform.lossyScale.x == c_defaultFloorScale)
+				floor.transform.localScale = new Vector3(c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value);
 		}
 	}
 
@@ -58,6 +59,7 @@ public class Objective : MonoBehaviour {
 
 	public void ResetTower()
 	{
+		CompleteTutorials();
 		var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
 		GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + currentLevelName + ".prefab");
 		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);

@@ -5,7 +5,8 @@ using UnityEngine;
 public class StarManager : MonoBehaviour {
 	void Start () {
 		Stars = new List<GameObject>();
-		Vector3 towerPosition = GameObject.FindGameObjectWithTag(c_towerTag).transform.localPosition;
+		var tower = GameObject.FindGameObjectWithTag(c_towerTag);
+		Vector3 towerPosition = tower.transform.localPosition;
 		for (int i = 0; i < StarCount; i++) {
 			float y = 1.4f * gameObject.transform.localScale.y;
 			float scale = .05f * gameObject.transform.localScale.y;
@@ -26,7 +27,10 @@ public class StarManager : MonoBehaviour {
 			{
 				createdStar.AddComponent<TowerTutorial>();
 				createdStar.GetComponent<TowerTutorial>().Message = TutorialMessage;
-				createdStar.GetComponent<TowerTutorial>().Position = new Vector3(0, -.3f, 0);
+				float yScale = tower.transform.lossyScale.y > 1
+					? (tower.transform.lossyScale.y - 1) / 2 + 1
+					: Mathf.Abs((tower.transform.lossyScale.y - 1) / 2) + tower.transform.lossyScale.y;
+				createdStar.GetComponent<TowerTutorial>().Position = new Vector3(0, -.35f * yScale, 0);
 				createdStar.GetComponent<TowerTutorial>().Rotation = new Vector3(0, 90, 0);
 			}
 			Stars.Add(createdStar);

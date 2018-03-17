@@ -15440,7 +15440,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: {x: 0.2, y: 0, z: 0.2}
   Rotation: {x: 0, y: 90, z: 0}
-  Message: Beware ramps the will send the ball away from the hole.
+  Message: Beware ramps that will send the ball away from the hole.
 --- !u!114 &114319209786563006
 MonoBehaviour:
   m_ObjectHideFlags: 1

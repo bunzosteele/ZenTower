@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,20 +30,24 @@ public class LevelNavigation : MonoBehaviour {
 		DirectoryInfo directory = new DirectoryInfo(c_filePath);
 		List<FileInfo> infos = new List<FileInfo>(directory.GetFiles("*.prefab"));
 		infos.Sort(new FileComparer());
-		float x = -175;
-		float y = 150;
+		float x = -145;
+		float y = 120;
 		Dictionary<string, int> saveData = SaveManager.LoadData();
+		bool isBeat = true;
 		foreach (FileInfo info in infos)
 		{
 			string level = info.Name.Split('.')[0];
 			var newButton = Instantiate(buttonTemplate, new Vector3(x, y, 0), Quaternion.identity);
 			newButton.transform.SetParent(gameObject.transform.GetChild(0));
 			newButton.transform.GetChild(0).GetComponent<Text>().text = level;
+			newButton.transform.GetChild(0).GetComponent<Text>().fontSize = 28;
 			newButton.transform.localScale = new Vector3(1f, 1f, 1f);
 			newButton.transform.localEulerAngles = new Vector3(0, 0, 0);
 			newButton.transform.localPosition = new Vector3(x, y, 0);
 			newButton.GetComponent<Button>().onClick.RemoveAllListeners();
 			newButton.GetComponent<Button>().onClick.AddListener(delegate { ChangeLevel(level); });
+			if(!isBeat)
+				newButton.GetComponent<Button>().interactable = false;
 			if (saveData.ContainsKey(level))
 			{
 				int score = saveData[level];
@@ -52,6 +57,8 @@ public class LevelNavigation : MonoBehaviour {
 					for (int i = 0; i < score; i++)
 					{
 						var star = Instantiate(starTemplate, new Vector3(0, 0, 0), Quaternion.identity);
+						var renderer = star.GetComponent<Renderer>();
+						renderer.material = Resources.Load("Gold", typeof(Material)) as Material;
 						star.transform.SetParent(newButton.transform);
 						star.transform.localScale = new Vector3(5, .01f, 6.6f);
 						star.transform.localEulerAngles = new Vector3(-90, 0, 0);
@@ -62,19 +69,35 @@ public class LevelNavigation : MonoBehaviour {
 				{
 					var star = Instantiate(superStarTemplate, new Vector3(0, 0, 0), Quaternion.identity);
 					star.transform.SetParent(newButton.transform);
-					star.transform.localScale = new Vector3(10, .01f, 13.2f);
+					star.transform.localScale = new Vector3(7.5f, .01f, 9.9f);
 					star.transform.localEulerAngles = new Vector3(-90, 0, 0);
-					star.transform.localPosition = new Vector3(0, -6, 0);
+					star.transform.localPosition = new Vector3(0, -10, 0);
 				}
 			}
+			else
+			{
+				isBeat = false;
+			}
 
-			x += 70f;
+			x += 60f;
 			if (x > 175)
 			{
-				x = -175;
-				y -= 70;
+				x = -145;
+				y -= 60;
 			}
 		}
+		int count = saveData.Values.Sum();
+
+		var countStar = Instantiate(starTemplate, new Vector3(0, 0, 0), Quaternion.identity);
+		var countStarRenderer = countStar.GetComponent<Renderer>();
+		countStarRenderer.material = Resources.Load("Gold", typeof(Material)) as Material;
+		countStar.transform.SetParent(GameObject.FindGameObjectWithTag("Menu").transform);
+		countStar.transform.localScale = new Vector3(7.5f, .01f, 9.9f);
+		countStar.transform.localEulerAngles = new Vector3(-90, 0, 0);
+		countStar.transform.localPosition = new Vector3(160, 162.5f, 0);
+
+		var countText = GameObject.FindGameObjectWithTag("StarCount").GetComponent<Text>();
+		countText.text = count.ToString();
 	}
 
 	public void ChangeLevel(string levelName)
@@ -101,6 +124,7 @@ public class LevelNavigation : MonoBehaviour {
 			if (isDeleting)
 			{
 				SaveManager.DeleteData();
+				ChangeLevel("1");
 				ReloadNavigation();
 				ToggleIsDeleting(false);
 			}
@@ -136,7 +160,7 @@ public class LevelNavigation : MonoBehaviour {
 		}
 		else
 		{
-			GameObject.FindGameObjectWithTag(c_deleteButtonTag).transform.GetChild(0).GetComponent<Text>().text = "Delete Scores";
+			GameObject.FindGameObjectWithTag(c_deleteButtonTag).transform.GetChild(0).GetComponent<Text>().text = "Delete All Progress";
 			isDeleting = false;
 		}
 	}
