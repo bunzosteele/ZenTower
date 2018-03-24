@@ -13,7 +13,7 @@ public class TutorialThree : MonoBehaviour
 
 	public void ShowHint()
 	{
-		hintCoroutine = StartCoroutine(HintCoroutine("You can use the trackpad to teleport around the tower."));
+		hintCoroutine = StartCoroutine(HintCoroutine("You can use the trackpad to teleport around the tower.", EVRButtonId.k_EButton_SteamVR_Touchpad));
 	}
 
 	public void CompleteFirstStep()
@@ -31,48 +31,32 @@ public class TutorialThree : MonoBehaviour
 		CancelInvoke("ShowHint");
 	}
 
-	private IEnumerator HintCoroutine(string hint)
+	private IEnumerator HintCoroutine(string hint, EVRButtonId button)
 	{
-		float prevBreakTime = Time.time;
-		float prevHapticPulseTime = Time.time;
-
 		while (true)
 		{
-			bool pulsed = false;
-
-			//Show the hint on each eligible hand
 			foreach (Hand hand in player.hands)
 			{
-				bool isShowingHint = !string.IsNullOrEmpty(ControllerButtonHints.GetActiveHintText(hand, EVRButtonId.k_EButton_SteamVR_Touchpad));
+				if (hand.controller == null)
+					continue;
+
+				bool isShowingHint = !string.IsNullOrEmpty(ControllerButtonHints.GetActiveHintText(hand, button));
 				if (!isShowingHint)
-				{
-					ControllerButtonHints.ShowTextHint(hand, EVRButtonId.k_EButton_SteamVR_Touchpad, hint);
-					prevBreakTime = Time.time;
-					prevHapticPulseTime = Time.time;
-				}
+					ControllerButtonHints.ShowTextHint(hand, button, hint);
 
-				if (Time.time > prevHapticPulseTime + 0.05f)
-				{
-					//Haptic pulse for a few seconds
-					pulsed = true;
-
-					hand.controller.TriggerHapticPulse(500);
-				}
+				StartCoroutine(StartBuzz(hand));
+				yield return new WaitForSeconds(1f);
 			}
+			yield return null;
+		}
+	}
 
-			if (Time.time > prevBreakTime + 3.0f)
-			{
-				//Take a break for a few seconds
-				yield return new WaitForSeconds(3.0f);
-
-				prevBreakTime = Time.time;
-			}
-
-			if (pulsed)
-			{
-				prevHapticPulseTime = Time.time;
-			}
-
+	private IEnumerator StartBuzz(Hand hand)
+	{
+		var startTime = Time.time;
+		while (Time.time < startTime + .1f)
+		{
+			hand.controller.TriggerHapticPulse(500);
 			yield return null;
 		}
 	}

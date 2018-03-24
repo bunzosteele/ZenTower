@@ -7,14 +7,16 @@ public class Objective : MonoBehaviour {
 
 	void Start () {
 		currentLevelName = gameObject.transform.parent.parent.gameObject.name.Split('(')[0];
-
 		initialObjectivePosition = gameObject.transform.localPosition;
+		s_defaultTowerSize = GameObject.FindGameObjectWithTag("Twistable").GetComponent<BoxCollider>().size.x;
+		RotateObject.s_towerSize = s_defaultTowerSize;
+		TowerResize.s_defaultTowerSize = s_defaultTowerSize;
 
 		var scale = SettingsManager.LoadData().Scale;
 		if (scale.HasValue) {
-			var tower = GameObject.FindGameObjectWithTag(c_levelTag);
-			tower.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
-			RotateObject.s_towerSize = c_defaultTowerSize * scale.Value;
+			var level = GameObject.FindGameObjectWithTag(c_levelTag);
+			level.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
+			RotateObject.s_towerSize = s_defaultTowerSize * scale.Value;
 
 			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
 			if(floor.transform.lossyScale.x == c_defaultFloorScale)
@@ -27,10 +29,11 @@ public class Objective : MonoBehaviour {
 		{
 			CompleteTutorials();
 			var level = gameObject.transform.parent.parent.parent;
-			SaveManager.SaveData(currentLevelName, level.GetComponent<StarManager>().GetScore());
+			var category = LevelNavigation.CurrentCategory;
+			SaveManager.SaveData(category, currentLevelName, level.GetComponent<StarManager>().GetScore());
 			GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().ReloadNavigation();
 			DeleteTower();
-			CreateTower(gameObject.transform.parent.parent.parent.transform.localScale);
+			GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().LoadNextLevel();
 		}else if(Math.Abs(gameObject.transform.position.x) > 1.5 || Math.Abs(gameObject.transform.position.z) > 1.5)
 		{
 			ResetTower();
@@ -50,18 +53,12 @@ public class Objective : MonoBehaviour {
 		Destroy(currentLevel);
 	}
 
-	public void CreateTower(Vector3 scale)
-	{
-		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
-		newLevel.transform.localScale = scale;
-		RotateObject.Objective = GameObject.FindGameObjectWithTag("Objective");
-	}
-
 	public void ResetTower()
 	{
 		CompleteTutorials();
 		var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
-		GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + currentLevelName + ".prefab");
+		var category = LevelNavigation.CurrentCategory;
+		GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + category + '/' + currentLevelName + ".prefab");
 		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
 		DeleteTower();
 		newLevel.transform.localScale = currentLevel.transform.localScale;
@@ -105,9 +102,8 @@ public class Objective : MonoBehaviour {
 	const string c_spikeTag = "Spike";
 	const string c_floorTag = "Floor";
 	const float c_defaultFloorScale = 1.2f;
-	const float c_defaultTowerSize = .4f;
+	float s_defaultTowerSize = .4f;
 	public string currentLevelName;
-	public GameObject nextLevel;
 	public GameObject touchedObject;
 	private List<float> rotations = new List<float>();
 	private Vector3 initialObjectivePosition;

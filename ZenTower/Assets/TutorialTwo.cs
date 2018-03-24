@@ -2,6 +2,7 @@
 using System.Collections;
 using Valve.VR.InteractionSystem;
 using Valve.VR;
+using System.Threading;
 
 public class TutorialTwo : MonoBehaviour
 {
@@ -61,46 +62,30 @@ public class TutorialTwo : MonoBehaviour
 
 	private IEnumerator HintCoroutine(string hint, EVRButtonId button)
 	{
-		float prevBreakTime = Time.time;
-		float prevHapticPulseTime = Time.time;
-
 		while (true)
 		{
-			bool pulsed = false;
-
-			//Show the hint on each eligible hand
 			foreach (Hand hand in player.hands)
 			{
+				if (hand.controller == null)
+					continue;
+
 				bool isShowingHint = !string.IsNullOrEmpty(ControllerButtonHints.GetActiveHintText(hand, button));
 				if (!isShowingHint)
-				{
 					ControllerButtonHints.ShowTextHint(hand, button, hint);
-					prevBreakTime = Time.time;
-					prevHapticPulseTime = Time.time;
-				}
 
-				if (Time.time > prevHapticPulseTime + 0.05f)
-				{
-					//Haptic pulse for a few seconds
-					pulsed = true;
-
-					hand.controller.TriggerHapticPulse(500);
-				}
+					StartCoroutine(StartBuzz(hand));
+				yield return new WaitForSeconds(1f);
 			}
+			yield return null;
+		}
+	}
 
-			if (Time.time > prevBreakTime + 3.0f)
-			{
-				//Take a break for a few seconds
-				yield return new WaitForSeconds(3.0f);
-
-				prevBreakTime = Time.time;
-			}
-
-			if (pulsed)
-			{
-				prevHapticPulseTime = Time.time;
-			}
-
+	private IEnumerator StartBuzz(Hand hand)
+	{
+		var startTime = Time.time;
+		while (Time.time < startTime + .1f)
+		{
+			hand.controller.TriggerHapticPulse(500);
 			yield return null;
 		}
 	}

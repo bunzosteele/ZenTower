@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using Valve.VR.InteractionSystem;
 
 public class RotateObject : MonoBehaviour {
 	private void Start ()
@@ -124,6 +126,8 @@ public class RotateObject : MonoBehaviour {
 		s_previousObjectiveAngularVelocity = objectiveBody.angularVelocity;
 		objectiveBody.useGravity = false;
 		objectiveBody.isKinematic = true;
+
+		hasBuzzed = true;
 	}
 
 	private void TwistObject()
@@ -151,6 +155,42 @@ public class RotateObject : MonoBehaviour {
 		grabbedObject.transform.Rotate(0, angle, 0);
 		m_initialControllerPosition = m_trackedObject.transform.position;
 		m_initialObjectPosition = grabbedObject.transform.position;
+
+		NotifyIfAtOrigin();
+	}
+
+	private void NotifyIfAtOrigin()
+	{
+		if (grabbedObject.transform.rotation.eulerAngles.y > s_previousAngle - 5 && grabbedObject.transform.rotation.eulerAngles.y < s_previousAngle + 5)
+		{
+			var controllers = Player.instance.hands;
+			foreach (var controller in controllers)
+			{
+				var rotateObject = controller.GetComponent<RotateObject>();
+				if (rotateObject != null && rotateObject.grabbedObject != null && rotateObject.grabbedObject == grabbedObject && !hasBuzzed)
+				{
+					StartCoroutine(StartBuzz(controller));
+					hasBuzzed = true;
+				}
+			}
+		}
+		if(MathUtility.AreEqual(s_previousAngle, 0) && (Mathf.Abs(grabbedObject.transform.rotation.eulerAngles.y) > 45 && grabbedObject.transform.rotation.eulerAngles.y < 315))
+		{
+			hasBuzzed = false;
+		}else if (!MathUtility.AreEqual(s_previousAngle, 0) && (grabbedObject.transform.rotation.eulerAngles.y < s_previousAngle - 45 || grabbedObject.transform.rotation.eulerAngles.y > s_previousAngle + 45))
+		{
+			hasBuzzed = false;
+		}
+	}
+
+	private IEnumerator StartBuzz(Hand hand)
+	{
+		var startTime = Time.time;
+		while (Time.time < startTime + .2f)
+		{
+			hand.controller.TriggerHapticPulse(500);
+			yield return null;
+		}
 	}
 
 	public void Reset()
@@ -196,4 +236,5 @@ public class RotateObject : MonoBehaviour {
 	public static Vector3 s_previousObjectiveAngularVelocity;
 	public static Vector3 s_previousObjectiveVelocity;
 	public static GameObject Objective { get; set; }
+	private static bool hasBuzzed = false;
 }

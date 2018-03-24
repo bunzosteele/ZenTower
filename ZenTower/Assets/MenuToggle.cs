@@ -30,7 +30,8 @@ public class MenuToggle : MonoBehaviour {
 			var lazers = GameObject.FindGameObjectsWithTag(c_lazerTag);
 			foreach (var lazer in lazers)
 			{
-				lazer.GetComponent<MeshRenderer>().enabled = true;
+				if(lazer.transform.parent.parent == gameObject.transform)
+					lazer.GetComponent<MeshRenderer>().enabled = true;
 			}
 			isMenuOpen = true;
 		}
@@ -47,9 +48,8 @@ public class MenuToggle : MonoBehaviour {
 			var lazers = GameObject.FindGameObjectsWithTag(c_lazerTag);
 
 			foreach(var lazer in lazers)
-			{
 				lazer.GetComponent<MeshRenderer>().enabled = false;
-			}
+
 			isMenuOpen = false;
 		}
 	}

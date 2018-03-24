@@ -5,41 +5,55 @@ using UnityEngine;
 
 public static class SaveManager
 {
-	public static void SaveData(string levelName, int score)
+	public static void SaveData(string categoryName, string levelName, int score)
 	{
-		Dictionary<string, int> parsedSave;
+		Dictionary<string, Dictionary<string, int>> parsedSave;
 		if (File.Exists(Application.persistentDataPath + c_fileName))
 		{
 			parsedSave = LoadData();
-			if (parsedSave.ContainsKey(levelName))
+			if (parsedSave.ContainsKey(categoryName) && parsedSave[categoryName].ContainsKey(levelName))
 			{
-				int previousScore = parsedSave[levelName];
+				int previousScore = parsedSave[categoryName][levelName];
 				if(score > previousScore)
 				{
-					parsedSave[levelName] = score;
+					parsedSave[categoryName][levelName] = score;
 				}
 			}
 			else
 			{
-				parsedSave.Add(levelName, score);
+				if (parsedSave.ContainsKey(categoryName))
+				{
+					parsedSave[categoryName].Add(levelName, score);
+				}
+				else
+				{
+					var newSave = new Dictionary<string, int>();
+					newSave.Add(levelName, score);
+					parsedSave.Add(categoryName, newSave);
+				}
 			}
 		}
 		else
 		{
-			parsedSave = new Dictionary<string, int>();
-			parsedSave.Add(levelName, score);
+			var newSave = new Dictionary<string, int>();
+			newSave.Add(levelName, score);
+
+			parsedSave = new Dictionary<string, Dictionary<string, int>>();
+			parsedSave.Add(categoryName, newSave);
 		}
 
 		string jsonToWrite = JsonConvert.SerializeObject(parsedSave);
 		File.WriteAllText(Application.persistentDataPath + c_fileName, jsonToWrite);
 	}
 
-	public static Dictionary<string, int> LoadData()
+	public static Dictionary<string, Dictionary<string, int>> LoadData()
 	{
+		if (!File.Exists(Application.persistentDataPath + c_fileName))
+			return null;
 		using (StreamReader r = new StreamReader(Application.persistentDataPath + c_fileName))
 		{
 			string savedata = r.ReadToEnd();
-			return JsonConvert.DeserializeObject<Dictionary<string, int>>(savedata);
+			return JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, int>>>(savedata);
 		}
 	}
 

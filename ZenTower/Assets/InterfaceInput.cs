@@ -25,6 +25,20 @@ public class InterfaceInput : MonoBehaviour
 		trackedController.TriggerClicked += HandleTriggerClicked;
 	}
 
+	private void OnDisable()
+	{
+		laserPointer = GetComponent<SteamVR_LaserPointer>();
+		laserPointer.PointerIn -= HandlePointerIn;
+		laserPointer.PointerOut -= HandlePointerOut;
+
+		trackedController = GetComponent<SteamVR_TrackedController>();
+		if (trackedController == null)
+		{
+			trackedController = GetComponentInParent<SteamVR_TrackedController>();
+		}
+		trackedController.TriggerClicked -= HandleTriggerClicked;
+	}
+
 	private void HandleTriggerClicked(object sender, ClickedEventArgs e)
 	{
 		if (EventSystem.current.currentSelectedGameObject != null)

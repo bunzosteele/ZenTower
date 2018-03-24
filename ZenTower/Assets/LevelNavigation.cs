@@ -7,9 +7,25 @@ using UnityEngine.UI;
 
 public class LevelNavigation : MonoBehaviour {
 
-	// Use this for initialization
 	void Start () {
+		LoadNextLevel();
+		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
 		Initialize();
+	}
+
+	private void Update()
+	{
+		string currentLevel = GameObject.FindGameObjectWithTag(c_levelTag).name.Split('(')[0];
+
+		var buttons = GameObject.FindGameObjectsWithTag(c_navButtonTag);
+		string category = GameObject.FindGameObjectWithTag("Category").GetComponent<Text>().text;
+		foreach (GameObject button in buttons)
+		{
+			if (button.transform.GetChild(0).GetComponent<Text>().text.Equals(currentLevel) && category.Equals(CurrentCategory))
+				button.GetComponent<Image>().color = new Color(.5f, 1f, .5f, 1);
+			else
+				button.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+		}
 	}
 
 	public void ReloadNavigation()
@@ -21,22 +37,25 @@ public class LevelNavigation : MonoBehaviour {
 			button.GetComponent<Button>().onClick.RemoveAllListeners();
 			Destroy(button);
 		}
-
 		Initialize();
 	}
 
 	private void Initialize()
 	{
-		DirectoryInfo directory = new DirectoryInfo(c_filePath);
+		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
+		DirectoryInfo directory = parentDirectory.GetDirectories()[m_pageId];
+		var category = GameObject.FindGameObjectWithTag("Category");
+		category.GetComponent<Text>().text = directory.Name;
 		List<FileInfo> infos = new List<FileInfo>(directory.GetFiles("*.prefab"));
 		infos.Sort(new FileComparer());
-		float x = -145;
+		float x = -120;
 		float y = 120;
-		Dictionary<string, int> saveData = SaveManager.LoadData();
+		Dictionary<string, Dictionary<string, int>> saveData = SaveManager.LoadData();
 		bool isBeat = true;
 		foreach (FileInfo info in infos)
 		{
 			string level = info.Name.Split('.')[0];
+			string currentLevel = GameObject.FindGameObjectWithTag(c_levelTag).name.Split('(')[0];
 			var newButton = Instantiate(buttonTemplate, new Vector3(x, y, 0), Quaternion.identity);
 			newButton.transform.SetParent(gameObject.transform.GetChild(0));
 			newButton.transform.GetChild(0).GetComponent<Text>().text = level;
@@ -45,12 +64,12 @@ public class LevelNavigation : MonoBehaviour {
 			newButton.transform.localEulerAngles = new Vector3(0, 0, 0);
 			newButton.transform.localPosition = new Vector3(x, y, 0);
 			newButton.GetComponent<Button>().onClick.RemoveAllListeners();
-			newButton.GetComponent<Button>().onClick.AddListener(delegate { ChangeLevel(level); });
+			newButton.GetComponent<Button>().onClick.AddListener(delegate { ChangeLevel(category.GetComponent<Text>().text, level); });
 			if(!isBeat)
 				newButton.GetComponent<Button>().interactable = false;
-			if (saveData.ContainsKey(level))
+			if (saveData != null && saveData.ContainsKey(directory.Name) && saveData[directory.Name].ContainsKey(level))
 			{
-				int score = saveData[level];
+				int score = saveData[directory.Name][level];
 				if (score > 0 && score < 4)
 				{
 					int starX = -12;
@@ -80,13 +99,15 @@ public class LevelNavigation : MonoBehaviour {
 			}
 
 			x += 60f;
-			if (x > 175)
+			if (x >= 180)
 			{
-				x = -145;
+				x = -120;
 				y -= 60;
 			}
 		}
-		int count = saveData.Values.Sum();
+		int count = 0;
+		if (saveData != null)
+			count = saveData.Values.Select(cat => cat.Values.Sum()).Sum();
 
 		var countStar = Instantiate(starTemplate, new Vector3(0, 0, 0), Quaternion.identity);
 		var countStarRenderer = countStar.GetComponent<Renderer>();
@@ -98,15 +119,135 @@ public class LevelNavigation : MonoBehaviour {
 
 		var countText = GameObject.FindGameObjectWithTag("StarCount").GetComponent<Text>();
 		countText.text = count.ToString();
+
+		if(m_pageId > 0)
+		{
+			var newButton = Instantiate(buttonTemplate, new Vector3(-190, 35, 0), Quaternion.identity);
+			newButton.transform.SetParent(gameObject.transform.GetChild(0));
+			newButton.transform.GetChild(0).GetComponent<Text>().text = "<";
+			newButton.transform.GetChild(0).GetComponent<Text>().fontSize = 28;
+			newButton.transform.GetChild(0).GetComponent<Text>().transform.localScale = new Vector3(1, 1.5f, 1);
+			newButton.transform.GetChild(0).GetComponent<Text>().resizeTextForBestFit = true;
+			newButton.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+			newButton.transform.localEulerAngles = new Vector3(0, 0, 0);
+			newButton.transform.localPosition = new Vector3(-190, 35, 0);
+			newButton.GetComponent<Button>().onClick.RemoveAllListeners();
+			newButton.GetComponent<Button>().onClick.AddListener(delegate { PageDown(); });
+		}
+
+		if (m_pageId < parentDirectory.GetDirectories().Length - 1)
+		{
+			var newButton = Instantiate(buttonTemplate, new Vector3(190, 35, 0), Quaternion.identity);
+			newButton.transform.SetParent(gameObject.transform.GetChild(0));
+			newButton.transform.GetChild(0).GetComponent<Text>().text = ">";
+			newButton.transform.GetChild(0).GetComponent<Text>().fontSize = 28;
+			newButton.transform.GetChild(0).GetComponent<Text>().transform.localScale = new Vector3(1, 1.5f, 1);
+			newButton.transform.GetChild(0).GetComponent<Text>().resizeTextForBestFit = true;
+			newButton.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+			newButton.transform.localEulerAngles = new Vector3(0, 0, 0);
+			newButton.transform.localPosition = new Vector3(190, 35, 0);
+			newButton.GetComponent<Button>().onClick.RemoveAllListeners();
+			newButton.GetComponent<Button>().onClick.AddListener(delegate { PageUp(); });
+			newButton.GetComponent<Button>().interactable = false;
+			var requirementText = GameObject.FindGameObjectWithTag("Requirement").GetComponent<Text>();
+			requirementText.text = "Unlocks at\n " + (m_pageId + 1) * c_startRequirement + "   s";
+			var star = Instantiate(starTemplate, new Vector3(0, 0, 0), Quaternion.identity);
+			star.transform.SetParent(GameObject.FindGameObjectWithTag("Requirement").transform);
+			star.transform.localScale = new Vector3(5, .01f, 6.6f);
+			star.transform.localEulerAngles = new Vector3(-90, 0, 0);
+			star.transform.localPosition = new Vector3(7.5f, -12.5f, 0);
+			var renderer = star.GetComponent<Renderer>();
+			renderer.material = Resources.Load("Gold", typeof(Material)) as Material;
+
+			if (count >= (m_pageId + 1) * c_startRequirement)
+			{
+				GameObject.FindGameObjectWithTag("Requirement").transform.localPosition = new Vector3(190, 100 - 900, 0);
+				newButton.GetComponent<Button>().interactable = true;
+			}
+			else
+			{
+				GameObject.FindGameObjectWithTag("Requirement").transform.localPosition = new Vector3(190, 100, 0);
+			}
+		}
 	}
 
-	public void ChangeLevel(string levelName)
+	public void LoadNextLevel()
+	{
+		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
+		Dictionary<string, Dictionary<string, int>> saveData = SaveManager.LoadData();
+		int pageId = -1;
+		string lowestCategory = null;
+		string lowestLevel = null;
+		int lowestScore = 4;
+		int lowestPageId = 0;
+		bool levelLoaded = false;
+		foreach (DirectoryInfo directory in parentDirectory.GetDirectories())
+		{
+			pageId++;
+			if (saveData == null)
+			{
+				LoadLevel(directory.Name, "1");
+				levelLoaded = true;
+				break;
+			}
+
+			if (saveData.Values.Select(cat => cat.Values.Sum()).Sum() < pageId * c_startRequirement)
+				break;
+
+			if (!saveData.ContainsKey(directory.Name))
+			{
+				LoadLevel(directory.Name, "1");
+				levelLoaded = true;
+				break;
+			}
+
+			var categoryScores = saveData[directory.Name];
+			List<FileInfo> files = new List<FileInfo>(directory.GetFiles("*.prefab"));
+			files.Sort(new FileComparer());
+			foreach (FileInfo file in files)
+			{
+				string fileName = file.Name.Split('.')[0];
+				if(categoryScores == null || !categoryScores.ContainsKey(fileName))
+				{
+					LoadLevel(directory.Name, fileName);
+					levelLoaded = true;
+					break;
+				}
+
+				if(categoryScores[fileName] < lowestScore)
+				{
+					lowestCategory = directory.Name;
+					lowestLevel = fileName;
+					lowestScore = categoryScores[fileName];
+					lowestPageId = pageId;
+				}
+			}
+
+			if (levelLoaded)
+				break;
+		}
+
+		if (!levelLoaded && lowestCategory != null && lowestLevel != null)
+		{
+			LoadLevel(lowestCategory, lowestLevel);
+			m_pageId = lowestPageId;
+		}
+		else
+		{
+			m_pageId = pageId;
+		}
+		CurrentCategory = parentDirectory.GetDirectories()[m_pageId].Name;
+		ReloadNavigation();
+	}
+
+	public void ChangeLevel(string categoryName, string levelName)
 	{
 		if (MenuToggle.isMenuOpen)
 		{
 			CompleteTutorials();
 			ToggleIsDeleting(false);
-			GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + levelName + ".prefab");
+			CurrentCategory = categoryName;
+			GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + CurrentCategory + '/' + levelName + ".prefab");
 			var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
 			var objective = GameObject.FindGameObjectWithTag(c_objectiveTag);
 			objective.GetComponent<Objective>().DeleteTower();
@@ -117,6 +258,21 @@ public class LevelNavigation : MonoBehaviour {
 		}
 	}
 
+	private void LoadLevel(string categoryName, string levelName)
+	{
+		CurrentCategory = categoryName;
+		var previousLevel = GameObject.FindGameObjectWithTag(c_levelTag);
+		GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + CurrentCategory + "/" + levelName + ".prefab");
+		GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
+
+		if(previousLevel != null)
+			newLevel.transform.localScale = previousLevel.transform.localScale;
+
+		var newObjective = GameObject.FindGameObjectWithTag("Objective");
+		RotateObject.Objective = newObjective;
+		CurrentCategory = categoryName;
+	}
+
 	public void DeleteScores()
 	{
 		if (MenuToggle.isMenuOpen)
@@ -124,7 +280,8 @@ public class LevelNavigation : MonoBehaviour {
 			if (isDeleting)
 			{
 				SaveManager.DeleteData();
-				ChangeLevel("1");
+				ChangeLevel("4x4", "1");
+				m_pageId = 0;
 				ReloadNavigation();
 				ToggleIsDeleting(false);
 			}
@@ -149,6 +306,22 @@ public class LevelNavigation : MonoBehaviour {
 		var tutorialThree = level.GetComponent<TutorialThree>();
 		if (tutorialThree != null)
 			tutorialThree.CompleteFirstStep();
+	}
+
+	private void PageUp()
+	{
+		m_pageId++;
+		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
+		DirectoryInfo directory = parentDirectory.GetDirectories()[m_pageId];
+		ReloadNavigation();
+	}
+
+	private void PageDown()
+	{
+		m_pageId--;
+		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
+		DirectoryInfo directory = parentDirectory.GetDirectories()[m_pageId];
+		ReloadNavigation();
 	}
 
 	public void ToggleIsDeleting(bool isOn)
@@ -180,8 +353,10 @@ public class LevelNavigation : MonoBehaviour {
 	const string c_levelTag = "Level";
 	const string c_navButtonTag = "NavButton";
 	const string c_deleteButtonTag = "DeleteButton";
+	const int c_startRequirement = 30;
 
 	public bool isDeleting = false;
+	private static int m_pageId = 0;
 
 	[SerializeField]
 	GameObject buttonTemplate;
@@ -191,4 +366,7 @@ public class LevelNavigation : MonoBehaviour {
 
 	[SerializeField]
 	GameObject superStarTemplate;
+
+	public static string CurrentCategory = "4x4";
+
 }
