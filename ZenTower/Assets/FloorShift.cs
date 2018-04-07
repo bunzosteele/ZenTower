@@ -5,6 +5,9 @@ public class FloorShift : MonoBehaviour {
 	}
 	
 	void Update () {
+		if (!gameObject.GetComponent<Objective>().winnable)
+			return;
+
 		float currentY = gameObject.transform.position.y;
 		GameObject parent = GameObject.FindGameObjectWithTag("Tower");
 		foreach(Transform child in parent.transform)

@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class StarManager : MonoBehaviour {
 	void Start () {
+		Invoke("CreateStars", 1.55f);
+	}
+
+	private void CreateStars()
+	{
 		Stars = new List<GameObject>();
 		var tower = GameObject.FindGameObjectWithTag(c_towerTag);
 		Vector3 towerPosition = tower.transform.localPosition;
-		for (int i = 0; i < StarCount; i++) {
+		for (int i = 0; i < StarCount; i++)
+		{
 			float y = 1.4f * gameObject.transform.localScale.y;
 			float scale = .05f * gameObject.transform.localScale.y;
 			float spacing = .15f * gameObject.transform.localScale.y;
@@ -17,13 +23,13 @@ public class StarManager : MonoBehaviour {
 			createdStar.transform.parent = gameObject.transform;
 			createdStar.transform.Rotate(new Vector3(-90, 90, 0));
 			createdStar.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-			if(i < 3)
+			if (i < 3)
 			{
 				var renderer = createdStar.GetComponent<Renderer>();
 				renderer.material = Resources.Load("Gold", typeof(Material)) as Material;
 			}
 
-			if(ShowTutorial && i == TutorialIndex)
+			if (ShowTutorial && i == TutorialIndex)
 			{
 				createdStar.AddComponent<TowerTutorial>();
 				createdStar.GetComponent<TowerTutorial>().Message = TutorialMessage;
@@ -34,6 +40,42 @@ public class StarManager : MonoBehaviour {
 				createdStar.GetComponent<TowerTutorial>().Rotation = new Vector3(0, 90, 0);
 			}
 			Stars.Add(createdStar);
+		}
+	}
+
+	public void CompleteLevel()
+	{
+		float delay = .1f;
+		foreach(var star in Stars)
+		{
+			Invoke("CelebrateStar", delay);
+			star.GetComponent<AnimationScript>().isAnimated = true;
+			delay += .45f;
+		}
+		Invoke("DeleteStars", delay + .45f);
+	}
+
+	private void CelebrateStar()
+	{
+		GameObject star = Stars[CelebrateIndex];
+		CelebrateIndex++;
+		if (star != null)
+		{
+			star.GetComponent<AudioSource>().Play();
+		}
+	}
+
+	public void DeleteStars()
+	{
+		CelebrateIndex = 0;
+		while (Stars.Any())
+		{
+			GameObject starToRemove = Stars.LastOrDefault();
+			if (starToRemove != null)
+			{
+				Stars.Remove(starToRemove);
+				Destroy(starToRemove);
+			}
 		}
 	}
 
@@ -56,6 +98,7 @@ public class StarManager : MonoBehaviour {
 	public GameObject StarObject;
 	public int StarCount;
 	public int TutorialIndex;
+	private int CelebrateIndex = 0;
 	public string TutorialMessage;
 	public bool ShowTutorial;
 	private List<GameObject> Stars;

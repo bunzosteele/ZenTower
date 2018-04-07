@@ -2,14 +2,13 @@
 using System.Collections;
 using Valve.VR.InteractionSystem;
 using Valve.VR;
-using System.Threading;
 
 public class TutorialTwo : MonoBehaviour
 {
 	void Start()
 	{
 		player = Player.instance;
-		Invoke("ShowHint", 1.0f);
+		Invoke("ShowHint", 1.55f);
 	}
 
 	public void ShowHint()

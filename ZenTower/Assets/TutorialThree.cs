@@ -8,7 +8,7 @@ public class TutorialThree : MonoBehaviour
 	void Start()
 	{
 		player = Player.instance;
-		Invoke("ShowHint", 1.0f);
+		Invoke("ShowHint", 1.55f);
 	}
 
 	public void ShowHint()

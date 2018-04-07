@@ -9,13 +9,16 @@ public class LevelNavigation : MonoBehaviour {
 
 	void Start () {
 		LoadNextLevel();
-		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
-		Initialize();
 	}
 
 	private void Update()
 	{
-		string currentLevel = GameObject.FindGameObjectWithTag(c_levelTag).name.Split('(')[0];
+		var level = GameObject.FindGameObjectWithTag(c_levelTag);
+
+		if (level == null)
+			return;
+
+		string currentLevel = level.name.Split('(')[0];
 
 		var buttons = GameObject.FindGameObjectsWithTag(c_navButtonTag);
 		string category = GameObject.FindGameObjectWithTag("Category").GetComponent<Text>().text;
@@ -28,7 +31,7 @@ public class LevelNavigation : MonoBehaviour {
 		}
 	}
 
-	public void ReloadNavigation()
+	public void ReloadNavigation(bool shouldPause = true)
 	{
 		var buttons = GameObject.FindGameObjectsWithTag(c_navButtonTag);
 
@@ -37,10 +40,10 @@ public class LevelNavigation : MonoBehaviour {
 			button.GetComponent<Button>().onClick.RemoveAllListeners();
 			Destroy(button);
 		}
-		Initialize();
+		Initialize(shouldPause);
 	}
 
-	private void Initialize()
+	private void Initialize(bool shouldPause)
 	{
 		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
 		DirectoryInfo directory = parentDirectory.GetDirectories()[m_pageId];
@@ -169,21 +172,24 @@ public class LevelNavigation : MonoBehaviour {
 				GameObject.FindGameObjectWithTag("Requirement").transform.localPosition = new Vector3(190, 100, 0);
 			}
 		}
+		if(shouldPause)
+			PauseNavigation();
 	}
 
 	public void LoadNextLevel()
 	{
 		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
 		Dictionary<string, Dictionary<string, int>> saveData = SaveManager.LoadData();
-		int pageId = -1;
+		int pageId = m_pageId;
 		string lowestCategory = null;
 		string lowestLevel = null;
 		int lowestScore = 4;
 		int lowestPageId = 0;
 		bool levelLoaded = false;
-		foreach (DirectoryInfo directory in parentDirectory.GetDirectories())
+		for(int i = pageId; i < parentDirectory.GetDirectories().Length; i++)
 		{
-			pageId++;
+			var directory = parentDirectory.GetDirectories()[i];
+
 			if (saveData == null)
 			{
 				LoadLevel(directory.Name, "1");
@@ -193,6 +199,8 @@ public class LevelNavigation : MonoBehaviour {
 
 			if (saveData.Values.Select(cat => cat.Values.Sum()).Sum() < pageId * c_startRequirement)
 				break;
+
+			pageId++;
 
 			if (!saveData.ContainsKey(directory.Name))
 			{
@@ -234,7 +242,7 @@ public class LevelNavigation : MonoBehaviour {
 		}
 		else
 		{
-			m_pageId = pageId;
+			m_pageId = pageId - 1;
 		}
 		CurrentCategory = parentDirectory.GetDirectories()[m_pageId].Name;
 		ReloadNavigation();
@@ -245,16 +253,18 @@ public class LevelNavigation : MonoBehaviour {
 		if (MenuToggle.isMenuOpen)
 		{
 			CompleteTutorials();
+			var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
+			currentLevel.GetComponent<StarManager>().DeleteStars();
 			ToggleIsDeleting(false);
 			CurrentCategory = categoryName;
 			GameObject nextLevel = AssetDatabase.LoadAssetAtPath<GameObject>(c_filePath + CurrentCategory + '/' + levelName + ".prefab");
-			var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
 			var objective = GameObject.FindGameObjectWithTag(c_objectiveTag);
 			objective.GetComponent<Objective>().DeleteTower();
 			GameObject newLevel = Instantiate(nextLevel, new Vector3(0, 0, 0), Quaternion.identity);
 			newLevel.transform.localScale = currentLevel.transform.localScale;
 			var newObjective = GameObject.FindGameObjectWithTag("Objective");
 			RotateObject.Objective = newObjective;
+			ReloadNavigation();
 		}
 	}
 
@@ -273,6 +283,39 @@ public class LevelNavigation : MonoBehaviour {
 		CurrentCategory = categoryName;
 	}
 
+	public void PauseNavigation(float duration = 1.55f)
+	{
+		var panel = GameObject.FindGameObjectWithTag(c_menuTag).transform.GetChild(0);
+		List<GameObject> pausedButtons = new List<GameObject>();
+		foreach (Transform menuItem in panel.transform)
+		{
+			var button = menuItem.gameObject.GetComponent<Button>();
+			if (button == null)
+				continue;
+
+			if (button.GetComponent<Button>().interactable)
+			{
+				button.GetComponent<Button>().interactable = false;
+				pausedButtons.Add(menuItem.gameObject);
+			}
+		}
+
+		m_pausedButtons = pausedButtons;
+		Invoke("EnableNavigation", duration);
+	}
+
+	private void EnableNavigation()
+	{
+		if (m_pausedButtons == null || !m_pausedButtons.Any())
+			return;
+
+		foreach (GameObject button in m_pausedButtons)
+		{
+			if(button != null)
+				button.GetComponent<Button>().interactable = true;
+		}
+	}
+
 	public void DeleteScores()
 	{
 		if (MenuToggle.isMenuOpen)
@@ -282,7 +325,7 @@ public class LevelNavigation : MonoBehaviour {
 				SaveManager.DeleteData();
 				ChangeLevel("4x4", "1");
 				m_pageId = 0;
-				ReloadNavigation();
+				CurrentCategory = "4x4";
 				ToggleIsDeleting(false);
 			}
 			else
@@ -295,6 +338,9 @@ public class LevelNavigation : MonoBehaviour {
 	private void CompleteTutorials()
 	{
 		var level = GameObject.FindGameObjectWithTag(c_levelTag);
+		if (level == null)
+			return;
+
 		var tutorialOne = level.GetComponent<TutorialOne>();
 		if (tutorialOne != null)
 			tutorialOne.CompleteSecondStep();
@@ -313,7 +359,7 @@ public class LevelNavigation : MonoBehaviour {
 		m_pageId++;
 		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
 		DirectoryInfo directory = parentDirectory.GetDirectories()[m_pageId];
-		ReloadNavigation();
+		ReloadNavigation(false);
 	}
 
 	private void PageDown()
@@ -321,7 +367,7 @@ public class LevelNavigation : MonoBehaviour {
 		m_pageId--;
 		DirectoryInfo parentDirectory = new DirectoryInfo(c_filePath);
 		DirectoryInfo directory = parentDirectory.GetDirectories()[m_pageId];
-		ReloadNavigation();
+		ReloadNavigation(false);
 	}
 
 	public void ToggleIsDeleting(bool isOn)
@@ -353,6 +399,7 @@ public class LevelNavigation : MonoBehaviour {
 	const string c_levelTag = "Level";
 	const string c_navButtonTag = "NavButton";
 	const string c_deleteButtonTag = "DeleteButton";
+	const string c_menuTag = "Menu";
 	const int c_startRequirement = 30;
 
 	public bool isDeleting = false;
@@ -368,5 +415,5 @@ public class LevelNavigation : MonoBehaviour {
 	GameObject superStarTemplate;
 
 	public static string CurrentCategory = "4x4";
-
+	private List<GameObject> m_pausedButtons = new List<GameObject>();
 }

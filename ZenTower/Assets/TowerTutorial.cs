@@ -9,7 +9,7 @@ public class TowerTutorial : MonoBehaviour
 	{
 		player = Player.instance;
 		textHintPrefab = Resources.Load("ControllerTextHint", typeof(GameObject)) as GameObject;
-		Invoke("ShowHint", 1.0f);
+		ShowHint();
 	}
 
 	public void ShowHint()

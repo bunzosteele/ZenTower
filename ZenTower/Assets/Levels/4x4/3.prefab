@@ -632,6 +632,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4291857039968518}
   - component: {fileID: 114729007755121650}
+  - component: {fileID: 111514917738650368}
   m_Layer: 0
   m_Name: 3
   m_TagString: Level
@@ -3450,7 +3451,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1223632016238374}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4070341683500870}
@@ -13063,6 +13064,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!111 &111514917738650368
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1223632016238374}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 6f7120441b23e7b45b23ad54f94f2f56, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 6f7120441b23e7b45b23ad54f94f2f56, type: 2}
+  - {fileID: 7400000, guid: 22401b5afb0492341ab3c8d739668dd5, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114000680480881074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13122,8 +13139,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e636fc328c4f2fe42937f68e18a7628c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_level: {fileID: 0}
   currentLevelName: 3
   touchedObject: {fileID: 0}
+  winnable: 0
 --- !u!114 &114421953705778294
 MonoBehaviour:
   m_ObjectHideFlags: 1

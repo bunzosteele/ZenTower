@@ -16,7 +16,8 @@ public class MenuToggle : MonoBehaviour {
 
 	private void ToggleMenu(object sender, ClickedEventArgs e)
 	{
-		var tutorial = GameObject.FindGameObjectWithTag("Level").GetComponent<TutorialTwo>();
+		var level = GameObject.FindGameObjectWithTag("Level");
+		var tutorial = level != null ? level.GetComponent<TutorialTwo>() : null;
 		if (!isMenuOpen)
 		{
 			if (tutorial != null)

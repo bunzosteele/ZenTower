@@ -79,7 +79,9 @@ public class RotateObject : MonoBehaviour {
 
 		if (droppedObject != s_previousObject && !MathUtility.AreEqual(nearestAngle % 360, s_previousAngle % 360))
 		{
-			droppedObject.transform.parent.parent.GetComponent<StarManager>().RemoveStar();
+			if(Objective.GetComponent<Objective>().winnable)
+				droppedObject.transform.parent.parent.GetComponent<StarManager>().RemoveStar();
+
 			s_previousObject = droppedObject;
 			s_previousAngle = nearestAngle;
 		}
@@ -105,9 +107,12 @@ public class RotateObject : MonoBehaviour {
 		if (grabbedObject == null)
 			return;
 
-		var tutorial = GameObject.FindGameObjectWithTag("Level").GetComponent<TutorialOne>();
-		if (tutorial != null)
-			tutorial.CompleteFirstStep();
+		var level = GameObject.FindGameObjectWithTag("Level");
+		if (level != null) {
+			var tutorial = level.GetComponent<TutorialOne>();
+			if (tutorial != null)
+				tutorial.CompleteFirstStep();
+		}
 
 		m_initialControllerPosition = m_trackedObject.transform.position;
 		m_initialObjectPosition = grabbedObject.transform.position;
@@ -205,6 +210,8 @@ public class RotateObject : MonoBehaviour {
 		if (other.CompareTag(c_tag))
 		{
 			hoverObject = other.gameObject;
+			if(Objective != null && Objective.transform.position.y >=0)
+				Objective.GetComponent<Objective>().winnable = true;
 		}
 	}
 
