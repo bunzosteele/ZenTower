@@ -92,10 +92,14 @@ public class TowerTutorial : MonoBehaviour
 		centerPosition += hintInfo.textStartAnchor.position;
 
 		// Scale hint components to match player size
-		hintInfo.textCanvas.transform.localScale = Vector3.Scale(hintInfo.textCanvas.transform.localScale, player.transform.localScale);
-		hintInfo.textStartAnchor.transform.localScale = Vector3.Scale(hintInfo.textStartAnchor.transform.localScale, player.transform.localScale);
-		hintInfo.textEndAnchor.transform.localScale = Vector3.Scale(hintInfo.textEndAnchor.transform.localScale, player.transform.localScale);
-		hintInfo.line.transform.localScale = Vector3.Scale(hintInfo.line.transform.localScale, player.transform.localScale);
+		int scale = 1;
+		if (isFar)
+			scale = 3;
+
+		hintInfo.textCanvas.transform.localScale = Vector3.Scale(hintInfo.textCanvas.transform.localScale * scale, player.transform.localScale * scale);
+		hintInfo.textStartAnchor.transform.localScale = Vector3.Scale(hintInfo.textStartAnchor.transform.localScale * scale, player.transform.localScale * scale);
+		hintInfo.textEndAnchor.transform.localScale = Vector3.Scale(hintInfo.textEndAnchor.transform.localScale * scale, player.transform.localScale * scale);
+		hintInfo.line.transform.localScale = Vector3.Scale(hintInfo.line.transform.localScale * scale, player.transform.localScale * scale);
 	}
 
 	private void HideText()
@@ -160,4 +164,5 @@ public class TowerTutorial : MonoBehaviour
 	private static Player player;
 
 	public string Message;
+	public bool isFar = false;
 }

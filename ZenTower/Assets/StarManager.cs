@@ -14,13 +14,13 @@ public class StarManager : MonoBehaviour {
 		Vector3 towerPosition = tower.transform.localPosition;
 		for (int i = 0; i < StarCount; i++)
 		{
-			float y = 1.4f * gameObject.transform.localScale.y;
-			float scale = .05f * gameObject.transform.localScale.y;
-			float spacing = .15f * gameObject.transform.localScale.y;
-			float xPosition = towerPosition.x * gameObject.transform.localScale.x;
-			var createdStar = Instantiate(StarObject, new Vector3(xPosition, y, towerPosition.z - (spacing * StarCount / 2) + spacing * i), Quaternion.identity);
+			float y = 1.4f;
+			float scale = .5f;
+			float spacing = 1.5f;
+			float xPosition = -5;
+			float totalWidth = scale * StarCount + spacing * (StarCount - 1);
+			var createdStar = Instantiate(StarObject, new Vector3(xPosition, y, (totalWidth / 2) * - 1 + spacing * i + scale * i + scale / 2), Quaternion.identity);
 			createdStar.transform.localScale = new Vector3(scale, scale, scale);
-			createdStar.transform.parent = gameObject.transform;
 			createdStar.transform.Rotate(new Vector3(-90, 90, 0));
 			createdStar.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 			if (i < 3)
@@ -33,11 +33,9 @@ public class StarManager : MonoBehaviour {
 			{
 				createdStar.AddComponent<TowerTutorial>();
 				createdStar.GetComponent<TowerTutorial>().Message = TutorialMessage;
-				float yScale = tower.transform.lossyScale.y > 1
-					? (tower.transform.lossyScale.y - 1) / 2 + 1
-					: Mathf.Abs((tower.transform.lossyScale.y - 1) / 2) + tower.transform.lossyScale.y;
-				createdStar.GetComponent<TowerTutorial>().Position = new Vector3(0, -.35f * yScale, 0);
+				createdStar.GetComponent<TowerTutorial>().Position = new Vector3(0, -.8f, 0);
 				createdStar.GetComponent<TowerTutorial>().Rotation = new Vector3(0, 90, 0);
+				createdStar.GetComponent<TowerTutorial>().isFar = true;
 			}
 			Stars.Add(createdStar);
 		}

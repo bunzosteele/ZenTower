@@ -57,7 +57,20 @@ public class Objective : MonoBehaviour {
 				CompleteTutorials();
 				var level = gameObject.transform.parent.parent.parent;
 				var category = LevelNavigation.CurrentCategory;
-				SaveManager.SaveData(category, currentLevelName, level.GetComponent<StarManager>().GetScore());
+				var saveData = SaveManager.LoadData();
+				int previousScore = -1;
+				if(saveData.ContainsKey(category) && saveData[category].ContainsKey(currentLevelName))
+				{
+					previousScore = saveData[category][currentLevelName];
+				}
+
+				int score = level.GetComponent<StarManager>().GetScore();
+				if (score > previousScore)
+				{
+					SaveManager.SaveData(category, currentLevelName, level.GetComponent<StarManager>().GetScore());
+					GameObject.FindGameObjectWithTag("AudioSource").transform.GetChild(1).GetComponent<AudioSource>().Play();
+				}
+
 				BeatLevel();
 			}
 			else if (!hasLost && Math.Abs(gameObject.transform.position.x) > (10 * gameObject.transform.lossyScale.x) || Math.Abs(gameObject.transform.position.z) > (10 * gameObject.transform.lossyScale.x))
@@ -87,7 +100,7 @@ public class Objective : MonoBehaviour {
 	{
 		hasLost = true;
 		winnable = false;
-		GameObject.FindGameObjectWithTag("AudioSource").GetComponent<AudioSource>().Play();
+		GameObject.FindGameObjectWithTag("AudioSource").transform.GetChild(0).GetComponent<AudioSource>().Play();
 		GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation(2.5f);
 		Invoke("ResetTower", 2.5f);
 	}

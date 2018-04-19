@@ -86,6 +86,11 @@ public class RotateObject : MonoBehaviour {
 
 			s_previousObject = droppedObject;
 			s_previousAngle = nearestAngle;
+			GameObject.FindGameObjectWithTag("AudioSource").transform.GetChild(2).GetComponent<AudioSource>().Play();
+		}
+		else
+		{
+			GameObject.FindGameObjectWithTag("AudioSource").transform.GetChild(3).GetComponent<AudioSource>().Play();
 		}
 
 		if (s_previousObject == null && s_previousAngle == -1f)
