@@ -2072,7 +2072,7 @@ GameObject:
   - component: {fileID: 114883501966727518}
   - component: {fileID: 111548431501500020}
   m_Layer: 0
-  m_Name: 18
+  m_Name: 19
   m_TagString: Level
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20809,7 +20809,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 18
   touchedObject: {fileID: 0}
   winnable: 0
 --- !u!114 &114182867381447612

@@ -227,7 +227,7 @@ public class LevelNavigation : MonoBehaviour {
 					lowestCategory = directory.Name;
 					lowestLevel = fileName;
 					lowestScore = categoryScores[fileName];
-					lowestPageId = pageId;
+					lowestPageId = pageId - 1;
 				}
 			}
 
@@ -244,6 +244,8 @@ public class LevelNavigation : MonoBehaviour {
 		{
 			m_pageId = pageId - 1;
 		}
+		if (m_pageId < 0)
+			m_pageId = 0;
 		CurrentCategory = parentDirectory.GetDirectories()[m_pageId].Name;
 		ReloadNavigation();
 	}
@@ -323,9 +325,9 @@ public class LevelNavigation : MonoBehaviour {
 			if (isDeleting)
 			{
 				SaveManager.DeleteData();
-				ChangeLevel("4x4", "1");
 				m_pageId = 0;
 				CurrentCategory = "4x4";
+				ChangeLevel("4x4", "1");
 				ToggleIsDeleting(false);
 			}
 			else

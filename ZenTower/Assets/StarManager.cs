@@ -68,6 +68,9 @@ public class StarManager : MonoBehaviour {
 	public void DeleteStars()
 	{
 		CelebrateIndex = 0;
+		if (Stars == null)
+			return;
+
 		while (Stars.Any())
 		{
 			GameObject starToRemove = Stars.LastOrDefault();
@@ -79,14 +82,17 @@ public class StarManager : MonoBehaviour {
 		}
 	}
 
-	public void RemoveStar()
+	public bool RemoveStar()
 	{
 		GameObject starToRemove = Stars.LastOrDefault();
 		if (starToRemove != null)
 		{
 			Stars.Remove(starToRemove);
 			Destroy(starToRemove);
+			return true;
 		}
+
+		return false;
 	}
 
 	public int GetScore()

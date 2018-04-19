@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,13 +15,12 @@ public class Objective : MonoBehaviour {
 		var scale = SettingsManager.LoadData().Scale;
 		m_level = gameObject.transform.parent.parent.gameObject;
 		if (scale.HasValue) {
-			
 			m_level.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
 			RotateObject.s_towerSize = s_defaultTowerSize * scale.Value;
 
 			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
 			if(floor.transform.lossyScale.x == c_defaultFloorScale)
-				floor.transform.localScale = new Vector3(c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value, c_defaultFloorScale * scale.Value);
+				floor.transform.localScale = new Vector3(c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1);
 		}
 
 		PlaySpawnAnimations();
@@ -54,7 +52,7 @@ public class Objective : MonoBehaviour {
 	void Update () {
 		if (winnable)
 		{
-			if (gameObject.transform.position.y < -.1)
+			if (gameObject.transform.position.y < -.1 && !hasLost)
 			{
 				CompleteTutorials();
 				var level = gameObject.transform.parent.parent.parent;
@@ -62,13 +60,14 @@ public class Objective : MonoBehaviour {
 				SaveManager.SaveData(category, currentLevelName, level.GetComponent<StarManager>().GetScore());
 				BeatLevel();
 			}
-			else if (Math.Abs(gameObject.transform.position.x) > 1.5 || Math.Abs(gameObject.transform.position.z) > 1.5)
+			else if (!hasLost && Math.Abs(gameObject.transform.position.x) > (10 * gameObject.transform.lossyScale.x) || Math.Abs(gameObject.transform.position.z) > (10 * gameObject.transform.lossyScale.x))
 			{
-				ResetTower();
+				LoseLevel();
 			}
-			else if (touchedObject != null)
+			else if (touchedObject != null && !hasLost)
 			{
-				ResetTower();
+				ExplodeBall();
+				Invoke("LoseLevel", 1f);
 			}
 		}
 	}
@@ -84,11 +83,21 @@ public class Objective : MonoBehaviour {
 		Invoke("LoadNextLevel", 2f);
 	}
 
+	public void LoseLevel()
+	{
+		hasLost = true;
+		winnable = false;
+		GameObject.FindGameObjectWithTag("AudioSource").GetComponent<AudioSource>().Play();
+		GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation(2.5f);
+		Invoke("ResetTower", 2.5f);
+	}
+
 	public void DeleteTower()
 	{
 		m_level.tag = "Untagged";
 		spawnAnimation.Play("TowerDespawn");
 		winnable = false;
+		hasLost = true;
 		Invoke("DestroyTower", 1.55f);
 	}
 
@@ -107,9 +116,27 @@ public class Objective : MonoBehaviour {
 		Destroy(currentLevel);
 	}
 
+	private void ExplodeBall()
+	{
+		hasLost = true;
+		gameObject.transform.localScale = new Vector3(.5f * gameObject.transform.localScale.x, .5f * gameObject.transform.localScale.y, .5f * gameObject.transform.localScale.z);
+		GameObject ballPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Sphere.prefab");
+		for (int i = 0; i < 3; i++)
+		{
+			var sphere = Instantiate(ballPrefab, gameObject.transform.position, Quaternion.identity);
+			sphere.transform.SetParent(gameObject.transform.parent);
+			sphere.transform.localScale = gameObject.transform.localScale;
+
+			if (i == 0)
+				sphere.GetComponent<AudioSource>().Play();
+		}
+		GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation(1);
+	}
+
 	public void ResetTower()
 	{
 		winnable = false;
+		hasLost = true;
 		CompleteTutorials();
 		var currentLevel = GameObject.FindGameObjectWithTag(c_levelTag);
 		var category = LevelNavigation.CurrentCategory;
@@ -221,5 +248,6 @@ public class Objective : MonoBehaviour {
 	public GameObject touchedObject;
 	private Vector3 initialObjectivePosition;
 	private Animation spawnAnimation;
-	public Boolean winnable = false;
+	public bool winnable = false;
+	public bool hasLost = false;
 }

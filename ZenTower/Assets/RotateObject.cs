@@ -67,8 +67,6 @@ public class RotateObject : MonoBehaviour {
 
 		droppedObject.transform.Rotate(0, (nearestAngle - droppedObject.transform.rotation.eulerAngles.y), 0);
 
-		Objective.transform.Translate(new Vector3(0, 0.005f, 0));
-
 		var objectiveBody = Objective.transform.GetComponent<Rigidbody>();
 
 		objectiveBody.useGravity = true;
@@ -79,8 +77,12 @@ public class RotateObject : MonoBehaviour {
 
 		if (droppedObject != s_previousObject && !MathUtility.AreEqual(nearestAngle % 360, s_previousAngle % 360))
 		{
-			if(Objective.GetComponent<Objective>().winnable)
-				droppedObject.transform.parent.parent.GetComponent<StarManager>().RemoveStar();
+			if (Objective.GetComponent<Objective>().winnable && !Objective.GetComponent<Objective>().hasLost)
+			{
+				if(!droppedObject.transform.parent.parent.GetComponent<StarManager>().RemoveStar()){
+					Objective.GetComponent<Objective>().LoseLevel();
+				}
+			}
 
 			s_previousObject = droppedObject;
 			s_previousAngle = nearestAngle;
@@ -92,6 +94,10 @@ public class RotateObject : MonoBehaviour {
 
 	private void PickupObject()
 	{
+		var objectiveScript = Objective.GetComponent<Objective>();
+		if (!objectiveScript.winnable || objectiveScript.hasLost)
+			return;
+
 		var controllers = GameObject.FindGameObjectsWithTag(c_controllerTag);
 		foreach (var controller in controllers)
 		{
@@ -210,7 +216,7 @@ public class RotateObject : MonoBehaviour {
 		if (other.CompareTag(c_tag))
 		{
 			hoverObject = other.gameObject;
-			if(Objective != null && Objective.transform.position.y >=0)
+			if(Objective != null && Objective.transform.position.y >=0 && !Objective.GetComponent<Objective>().hasLost)
 				Objective.GetComponent<Objective>().winnable = true;
 		}
 	}

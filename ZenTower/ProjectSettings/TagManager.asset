@@ -19,6 +19,9 @@ TagManager:
   - StarCount
   - Category
   - Requirement
+  - Grabbable
+  - Ground
+  - AudioSource
   layers:
   - Default
   - TransparentFX

@@ -7168,7 +7168,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1876892917239402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0.05, z: -0.2}
+  m_LocalPosition: {x: -0.45, y: 0.05, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4400242828082558}
@@ -26139,7 +26139,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 12
   touchedObject: {fileID: 0}
   winnable: 0
 --- !u!114 &114508253297035644
