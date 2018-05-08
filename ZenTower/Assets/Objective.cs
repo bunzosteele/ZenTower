@@ -73,7 +73,7 @@ public class Objective : MonoBehaviour {
 
 				BeatLevel();
 			}
-			else if (!hasLost && Math.Abs(gameObject.transform.position.x) > (10 * gameObject.transform.lossyScale.x) || Math.Abs(gameObject.transform.position.z) > (10 * gameObject.transform.lossyScale.x))
+			else if (!hasLost && Math.Abs(gameObject.transform.position.x) > (20 * gameObject.transform.lossyScale.x) || Math.Abs(gameObject.transform.position.z) > (20 * gameObject.transform.lossyScale.x))
 			{
 				LoseLevel();
 			}

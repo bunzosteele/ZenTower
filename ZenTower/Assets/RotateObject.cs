@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 
@@ -57,23 +58,23 @@ public class RotateObject : MonoBehaviour {
 				return;
 		}
 
+		int angleLock = 360 / GameObject.FindGameObjectWithTag(c_towerTag).GetComponent<TowerDetails>().SidesCount;
 		var rotationThreshold = lastDirection > 0
-			? c_angleLock / 3
-			: c_angleLock * 2 / 3;
+			? angleLock / 3
+			: angleLock * 2 / 3;
 
-		float nearestAngle = droppedObject.transform.rotation.eulerAngles.y % c_angleLock > rotationThreshold
-			? (float) System.Math.Ceiling(droppedObject.transform.rotation.eulerAngles.y / c_angleLock) * c_angleLock
-			: (float) System.Math.Floor(droppedObject.transform.rotation.eulerAngles.y / c_angleLock) * c_angleLock;
-
-		droppedObject.transform.Rotate(0, (nearestAngle - droppedObject.transform.rotation.eulerAngles.y), 0);
+		float nearestAngle = droppedObject.transform.rotation.eulerAngles.y % angleLock > rotationThreshold
+			? (float) Math.Ceiling(droppedObject.transform.rotation.eulerAngles.y / angleLock) * angleLock
+			: (float) Math.Floor(droppedObject.transform.rotation.eulerAngles.y / angleLock) * angleLock;
 
 		var objectiveBody = Objective.transform.GetComponent<Rigidbody>();
 
 		objectiveBody.useGravity = true;
 		objectiveBody.isKinematic = false;
-		objectiveBody.velocity = s_previousObjectiveVelocity;
-		objectiveBody.angularVelocity = s_previousObjectiveAngularVelocity;
+		objectiveBody.velocity = Quaternion.AngleAxis(nearestAngle-s_previousAngle, Vector3.up) * s_previousObjectiveVelocity;
+		objectiveBody.angularVelocity = Quaternion.AngleAxis(nearestAngle - s_previousAngle, Vector3.up) * s_previousObjectiveAngularVelocity;
 
+		droppedObject.transform.Rotate(0, (nearestAngle - droppedObject.transform.rotation.eulerAngles.y), 0);
 
 		if (droppedObject != s_previousObject && !MathUtility.AreEqual(nearestAngle % 360, s_previousAngle % 360))
 		{
@@ -240,7 +241,7 @@ public class RotateObject : MonoBehaviour {
 
 	const string c_tag = "Twistable";
 	const string c_controllerTag = "GameController";
-	const int c_angleLock = 90;
+	const string c_towerTag = "Tower";
 	private static GameObject s_previousObject = null;
 	private static float s_previousAngle;
 	[SerializeField]

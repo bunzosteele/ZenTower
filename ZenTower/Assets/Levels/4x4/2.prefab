@@ -559,6 +559,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4818996690328536}
+  - component: {fileID: 114359424601338472}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Tower
@@ -12846,6 +12847,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentFloor: {fileID: 0}
+--- !u!114 &114359424601338472
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1204014151075644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957c87bd27db24ca756bf205cb567c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SidesCount: 4
 --- !u!114 &114618421711097074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12898,9 +12911,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 2
   touchedObject: {fileID: 0}
   winnable: 0
+  hasLost: 0
 --- !u!114 &114795895233017290
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12927,6 +12940,7 @@ MonoBehaviour:
   Position: {x: 0.4, y: 0, z: 0.4}
   Rotation: {x: -30, y: 145, z: 0}
   Message: Moving a floor repeatedly only costs 1 star.
+  isFar: 0
 --- !u!114 &114996712125506056
 MonoBehaviour:
   m_ObjectHideFlags: 1

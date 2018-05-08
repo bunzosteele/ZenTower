@@ -1784,6 +1784,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4847597772868270}
+  - component: {fileID: 114690252122145546}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Tower
@@ -14158,6 +14159,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentFloor: {fileID: 0}
+--- !u!114 &114690252122145546
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1617890693389398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957c87bd27db24ca756bf205cb567c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SidesCount: 4
 --- !u!114 &114771653812015056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14172,6 +14185,7 @@ MonoBehaviour:
   Position: {x: 0.2, y: 0, z: 0.2}
   Rotation: {x: -50, y: 140, z: 0}
   Message: You should avoid spikes.
+  isFar: 0
 --- !u!114 &114813646577845656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14196,9 +14210,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 7
   touchedObject: {fileID: 0}
   winnable: 0
+  hasLost: 0
 --- !u!114 &114913827588590188
 MonoBehaviour:
   m_ObjectHideFlags: 1

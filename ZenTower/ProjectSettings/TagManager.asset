@@ -22,6 +22,7 @@ TagManager:
   - Grabbable
   - Ground
   - AudioSource
+  - TwistComponent
   layers:
   - Default
   - TransparentFX

@@ -3760,6 +3760,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4633132474644854}
+  - component: {fileID: 114782489189361884}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Tower
@@ -22539,6 +22540,18 @@ MonoBehaviour:
   TutorialIndex: 0
   TutorialMessage: 
   ShowTutorial: 0
+--- !u!114 &114782489189361884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1759016503125288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957c87bd27db24ca756bf205cb567c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SidesCount: 4
 --- !u!114 &114815834753243400
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -22565,6 +22578,7 @@ MonoBehaviour:
   m_level: {fileID: 0}
   touchedObject: {fileID: 0}
   winnable: 0
+  hasLost: 0
 --- !u!114 &114961430801202956
 MonoBehaviour:
   m_ObjectHideFlags: 1

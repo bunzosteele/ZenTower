@@ -2143,6 +2143,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4120127412315844}
+  - component: {fileID: 114571623656939192}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Tower
@@ -15458,6 +15459,7 @@ MonoBehaviour:
   Position: {x: 0.2, y: 0, z: 0.2}
   Rotation: {x: 0, y: 90, z: 0}
   Message: Beware ramps that will send the ball away from the hole.
+  isFar: 0
 --- !u!114 &114319209786563006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15482,9 +15484,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 9
   touchedObject: {fileID: 0}
   winnable: 0
+  hasLost: 0
 --- !u!114 &114448093011344102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15521,6 +15523,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   touchHighlightColor: {r: 1, g: 0.9764706, b: 0.1254902, a: 0}
+--- !u!114 &114571623656939192
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1638671685097986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957c87bd27db24ca756bf205cb567c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SidesCount: 4
 --- !u!114 &114628641538950314
 MonoBehaviour:
   m_ObjectHideFlags: 1

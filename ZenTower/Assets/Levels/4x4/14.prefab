@@ -451,6 +451,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4838136312598540}
+  - component: {fileID: 114944182494791312}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Tower
@@ -14167,9 +14168,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 14
   touchedObject: {fileID: 0}
   winnable: 0
+  hasLost: 0
 --- !u!114 &114808739229640590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14230,6 +14231,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   touchHighlightColor: {r: 1, g: 0.9764706, b: 0.1254902, a: 0}
+--- !u!114 &114944182494791312
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1127276182588506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957c87bd27db24ca756bf205cb567c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SidesCount: 4
 --- !u!135 &135987434960161950
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -181,6 +181,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4306784375977002}
+  - component: {fileID: 114602821095286196}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Tower
@@ -13251,9 +13252,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_level: {fileID: 0}
-  currentLevelName: 8
   touchedObject: {fileID: 0}
   winnable: 0
+  hasLost: 0
 --- !u!114 &114497226924105986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13278,6 +13279,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   touchHighlightColor: {r: 1, g: 0.9764706, b: 0.1254902, a: 0}
+--- !u!114 &114602821095286196
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1063923981518816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957c87bd27db24ca756bf205cb567c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SidesCount: 4
 --- !u!114 &114645055411667336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13292,6 +13305,7 @@ MonoBehaviour:
   Position: {x: 0.4, y: 0, z: 0.4}
   Rotation: {x: -20, y: 140, z: 0}
   Message: When you grab a floor, the ball freezes.
+  isFar: 0
 --- !u!114 &114650004880590028
 MonoBehaviour:
   m_ObjectHideFlags: 1
