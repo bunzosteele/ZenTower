@@ -12,11 +12,11 @@ public class FloorShift : MonoBehaviour {
 		GameObject parent = GameObject.FindGameObjectWithTag("Tower");
 		foreach(Transform child in parent.transform)
 		{
-			Collider collider = child.GetComponent<Collider>();
+			Collider collider = child.GetComponent<MeshCollider>();
 			if (collider == null || child == gameObject.transform)
 				continue;
 
-			if (currentY > (child.position.y - collider.bounds.size.y / 3) && currentY < child.position.y + collider.bounds.size.y / 3 * 2)
+			if (currentY > (child.position.y - child.lossyScale.y / 30) && currentY < child.position.y + child.lossyScale.y / 30 * 2)
 				currentFloor = child.gameObject;
 		}
 

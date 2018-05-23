@@ -8,21 +8,7 @@ public class Objective : MonoBehaviour {
 		currentLevelName = gameObject.transform.parent.parent.gameObject.name.Split('(')[0];
 		initialObjectivePosition = gameObject.transform.localPosition;
 		gameObject.GetComponent<Rigidbody>().isKinematic = true;
-		s_defaultTowerSize = GameObject.FindGameObjectWithTag("Twistable").GetComponent<BoxCollider>().size.x;
-		RotateObject.s_towerSize = s_defaultTowerSize;
-		TowerResize.s_defaultTowerSize = s_defaultTowerSize;
-
-		var scale = SettingsManager.LoadData().Scale;
 		m_level = gameObject.transform.parent.parent.gameObject;
-		if (scale.HasValue) {
-			m_level.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
-			RotateObject.s_towerSize = s_defaultTowerSize * scale.Value;
-
-			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
-			if(floor.transform.lossyScale.x == c_defaultFloorScale)
-				floor.transform.localScale = new Vector3(c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1);
-		}
-
 		PlaySpawnAnimations();
 		Invoke("ActivateObjective", 1.8f);
 	}
@@ -35,6 +21,7 @@ public class Objective : MonoBehaviour {
 		int i = 0;
 		int count = 0;
 		System.Random random = new System.Random();
+		winnable = true;
 		while (count <= childCount)
 		{
 			Transform floorWrapper = tower.transform.GetChild(i);
@@ -46,6 +33,21 @@ public class Objective : MonoBehaviour {
 			}
 			i++;
 			count++;
+		}
+
+		s_defaultTowerSize = GameObject.FindGameObjectWithTag(c_towerTag).GetComponent<TowerDetails>().DefaultSize;
+		RotateObject.s_towerSize = s_defaultTowerSize;
+		TowerResize.s_defaultTowerSize = s_defaultTowerSize;
+
+		var scale = SettingsManager.LoadData().Scale;
+		if (scale.HasValue)
+		{
+			m_level.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
+			RotateObject.s_towerSize = s_defaultTowerSize * scale.Value;
+
+			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
+			if (floor.transform.lossyScale.x == c_defaultFloorScale)
+				floor.transform.localScale = new Vector3(c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1);
 		}
 	}
 
@@ -254,6 +256,7 @@ public class Objective : MonoBehaviour {
 	const string c_spikeTag = "Spike";
 	const string c_floorTag = "Floor";
 	const string c_twistableTag = "Twistable";
+	const string c_towerTag = "Tower";
 	const float c_defaultFloorScale = 1.2f;
 	float s_defaultTowerSize = .4f;
 	public GameObject m_level;
