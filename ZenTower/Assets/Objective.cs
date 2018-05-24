@@ -104,7 +104,7 @@ public class Objective : MonoBehaviour {
 		winnable = false;
 		GameObject.FindGameObjectWithTag("AudioSource").transform.GetChild(0).GetComponent<AudioSource>().Play();
 		GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation(2.5f);
-		Invoke("ResetTower", 2.5f);
+		Invoke("ResetTower", 2f);
 	}
 
 	public void DeleteTower()
@@ -199,6 +199,7 @@ public class Objective : MonoBehaviour {
 		spawnAnimation = m_level.GetComponent<Animation>();
 		spawnAnimation.wrapMode = WrapMode.Once;
 		spawnAnimation.Play("TowerSpawn");
+		Invoke("PlaySpawnSound", .5f);
 
 		var tower = m_level.transform.GetChild(0);
 		int childCount = tower.transform.childCount;
@@ -229,6 +230,11 @@ public class Objective : MonoBehaviour {
 			}
 			count++;
 		}
+	}
+
+	private void PlaySpawnSound()
+	{
+		GameObject.FindGameObjectWithTag("AudioSource").transform.GetChild(4).GetComponent<AudioSource>().Play();
 	}
 
 	private string GetAnimationName(System.Random random)
