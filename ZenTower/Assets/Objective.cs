@@ -145,11 +145,13 @@ public class Objective : MonoBehaviour {
 			if (i == 0)
 				sphere.GetComponent<AudioSource>().Play();
 		}
-		GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation(1);
 	}
 
 	public void ResetTower()
 	{
+		if(!hasLost)
+			GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation();
+
 		winnable = false;
 		hasLost = true;
 		CompleteTutorials();
@@ -162,7 +164,6 @@ public class Objective : MonoBehaviour {
 		newLevel.transform.localScale = currentLevel.transform.localScale;
 		var newObjective = GameObject.FindGameObjectWithTag("Objective");
 		RotateObject.Objective = newObjective;
-		GameObject.FindGameObjectWithTag("Menu").GetComponent<LevelNavigation>().PauseNavigation();
 	}
 
 	private void OnTriggerStay(Collider other)

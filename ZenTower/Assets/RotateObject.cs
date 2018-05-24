@@ -231,6 +231,12 @@ public class RotateObject : MonoBehaviour {
 			if (Objective != null && Objective.transform.position.y >= 0 && !Objective.GetComponent<Objective>().hasLost)
 				Objective.GetComponent<Objective>().winnable = true;
 		}
+		else if (other.transform.parent.parent.CompareTag(c_tag))
+		{
+			hoverObject = other.transform.parent.parent.gameObject;
+			if (Objective != null && Objective.transform.position.y >= 0 && !Objective.GetComponent<Objective>().hasLost)
+				Objective.GetComponent<Objective>().winnable = true;
+		}
 	}
 
 	private void OnTriggerExit(Collider other)
