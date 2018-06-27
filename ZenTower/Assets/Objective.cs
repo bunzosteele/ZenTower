@@ -11,6 +11,21 @@ public class Objective : MonoBehaviour {
 		m_level = gameObject.transform.parent.parent.gameObject;
 		PlaySpawnAnimations();
 		Invoke("ActivateObjective", 1.8f);
+
+		s_defaultTowerSize = GameObject.FindGameObjectWithTag(c_towerTag).GetComponent<TowerDetails>().DefaultSize;
+		RotateObject.s_towerSize = s_defaultTowerSize;
+		TowerResize.s_defaultTowerSize = s_defaultTowerSize;
+
+		var scale = SettingsManager.LoadData().Scale;
+		if (scale.HasValue)
+		{
+			m_level.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
+			RotateObject.s_towerSize = s_defaultTowerSize * scale.Value;
+
+			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
+			if (floor.transform.lossyScale.x == c_defaultFloorScale)
+				floor.transform.localScale = new Vector3(c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1);
+		}
 	}
 
 	private void ActivateObjective()
@@ -33,21 +48,6 @@ public class Objective : MonoBehaviour {
 			}
 			i++;
 			count++;
-		}
-
-		s_defaultTowerSize = GameObject.FindGameObjectWithTag(c_towerTag).GetComponent<TowerDetails>().DefaultSize;
-		RotateObject.s_towerSize = s_defaultTowerSize;
-		TowerResize.s_defaultTowerSize = s_defaultTowerSize;
-
-		var scale = SettingsManager.LoadData().Scale;
-		if (scale.HasValue)
-		{
-			m_level.transform.localScale = new Vector3(scale.Value, scale.Value, scale.Value);
-			RotateObject.s_towerSize = s_defaultTowerSize * scale.Value;
-
-			var floor = GameObject.FindGameObjectWithTag(c_floorTag);
-			if (floor.transform.lossyScale.x == c_defaultFloorScale)
-				floor.transform.localScale = new Vector3(c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1, c_defaultFloorScale + scale.Value - 1);
 		}
 	}
 
